@@ -1,49 +1,57 @@
-import React, { useState } from 'react';
-import { 
-  View, Image, Text, TouchableOpacity, 
-  StyleSheet, Modal, TextInput 
-} from 'react-native';
-import { useRouter } from 'expo-router';
+import React, { useState } from "react";
+import { View, Image, Text, Modal, StyleSheet } from "react-native";
+import { useRouter } from "expo-router";
+import { db } from "@/app/services/firebase";
+import { doc, setDoc } from "firebase/firestore";
+import { v4 as uuidv4 } from "uuid";
+import ModernButton from "@/components/ModernButton";
+import ModernTextInput from "@/components/ModernTextInput";
 
 export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
-  const [name, setName] = useState('');
+  const [nickname, setName] = useState("");
   const router = useRouter();
 
-  const handleSubmit = () => {
-    setModalVisible(false);
-    router.push(`/data-gathering?name=${encodeURIComponent(name)}`);
+  const handleSubmit = async () => {
+    if (!nickname.trim()) return; // Prevent empty names
+
+    const userId = uuidv4(); // Generate unique user ID
+    try {
+      await setDoc(doc(db, "users", userId), {
+        nickname: nickname,
+        userId: userId,
+      });
+
+      setModalVisible(false);
+      router.push(`/data-gathering?userId=${userId}`); // Pass userId to GreetScreen
+    } catch (error) {
+      console.error("Error storing name:", error);
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Image source={require('@/assets/images/ForkCast.png')} style={styles.logo} />
+      <Image source={require("@/assets/images/ForkCast.png")} style={styles.logo} />
 
-      <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
-        <Text style={styles.buttonText}>Itadakimasu</Text>
-      </TouchableOpacity>
+      <ModernButton title="Itadakimasu" onPress={() => setModalVisible(true)} />
 
-      <Modal 
-        animationType="slide" 
-        transparent={true} 
+      <Modal
+        animationType="slide"
+        transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>How do we call you?</Text>
+            <Text style={styles.modalTitle}>Nickname</Text>
 
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your name"
-              placeholderTextColor="#888"
-              value={name}
+            <ModernTextInput
+              label="How do we call you?"
+              value={nickname}
               onChangeText={setName}
             />
 
-            <TouchableOpacity style={styles.modalButton} onPress={handleSubmit}>
-              <Text style={styles.modalButtonText}>Submit</Text>
-            </TouchableOpacity>
+            <ModernButton title="Submit" onPress={handleSubmit} />
           </View>
         </View>
       </Modal>
@@ -54,68 +62,35 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FBF5DF',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FBF5DF",
   },
   logo: {
     width: 200,
     height: 200,
     marginBottom: 20,
-    resizeMode: 'contain',
+    resizeMode: "contain",
     borderRadius: 100,
     borderWidth: 2,
-    borderColor: '#17181D',
+    borderColor: "#17181D",
   },
-  button: {
-    backgroundColor: '#17181D',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-  },
-  buttonText: {
-    fontSize: 20,
-    color: '#FCD9B8',
-    fontWeight: 'bold',
-  },
-  // Modal Styles
   modalOverlay: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalContainer: {
     width: 300,
-    backgroundColor: '#FFF',
+    backgroundColor: "#FFF",
     padding: 20,
     borderRadius: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
-  },
-  input: {
-    width: '100%',
-    borderWidth: 1,
-    borderColor: '#999',
-    borderRadius: 8,
-    padding: 10,
-    fontSize: 16,
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  modalButton: {
-    backgroundColor: '#17181D',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  modalButtonText: {
-    color: '#FCD9B8',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });
