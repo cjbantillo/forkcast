@@ -23,6 +23,9 @@ export default function GreetScreen() {
 
   useEffect(() => {
     const fetchMeals = async () => {
+      // API: Search by meal name
+      // Endpoint: https://www.themealdb.com/api/json/v1/1/search.php?s=
+      // Fetches all meals or meals matching a search query (empty query fetches all meals).
       try {
         const response = await fetch(
           "https://www.themealdb.com/api/json/v1/1/search.php?s="
@@ -38,6 +41,9 @@ export default function GreetScreen() {
     };
 
     const fetchCategories = async () => {
+      // API: List all categories
+      // Endpoint: https://www.themealdb.com/api/json/v1/1/categories.php
+      // Fetches a list of all meal categories.
       try {
         const response = await fetch(
           "https://www.themealdb.com/api/json/v1/1/categories.php"
@@ -65,12 +71,28 @@ export default function GreetScreen() {
     }
   };
 
-  const handleMealSelect = (meal) => {
-    alert(`You selected: ${meal.strMeal}`);
-    // You can navigate to another screen or perform additional actions here
+  const handleMealSelect = async (meal) => {
+    // API: Lookup full meal details by ID
+    // Endpoint: https://www.themealdb.com/api/json/v1/1/lookup.php?i={mealId}
+    // Fetches detailed information about a specific meal by its ID.
+    try {
+      const response = await fetch(
+        `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${meal.idMeal}`
+      );
+      const data = await response.json();
+      const mealDetails = data.meals[0];
+      alert(
+        `Name: ${mealDetails.strMeal}\nCategory: ${mealDetails.strCategory}\nArea: ${mealDetails.strArea}`
+      );
+    } catch (error) {
+      console.error("Error fetching meal details:", error);
+    }
   };
 
   const handleRandomMeal = async () => {
+    // API: Lookup a single random meal
+    // Endpoint: https://www.themealdb.com/api/json/v1/1/random.php
+    // Fetches a random meal from the database.
     try {
       setLoading(true);
       const response = await fetch(
@@ -86,6 +108,9 @@ export default function GreetScreen() {
   };
 
   const handleFilterByCategory = async (category) => {
+    // API: Filter by category
+    // Endpoint: https://www.themealdb.com/api/json/v1/1/filter.php?c={categoryName}
+    // Fetches meals that belong to a specific category.
     try {
       setLoading(true);
       const response = await fetch(
