@@ -12,7 +12,7 @@ const Colors = {
   },
 
   light: {
-    background: "#ffffff",
+    background: "#17181D",
     text: "#E69145",
     accent: "#E69145",
     primary: "#E69145", // Changed from "button" to match codebase

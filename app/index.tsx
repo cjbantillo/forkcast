@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { Text } from "react-native-paper";
 import { router } from "expo-router";
-import ModernButton from "../../components/ModernButton";
-import ModernTextInput from "../../components/ModernTextInput";
-import { useThemeColor } from "../../hooks/useThemeColor";
+import ModernButton from "../components/ModernButton";
+import ModernTextInput from "../components/ModernTextInput";
+import { useThemeColor } from "../hooks/useThemeColor";
 
 export default function Index() {
   const [name, setName] = useState("");
@@ -15,14 +15,14 @@ export default function Index() {
 
   const handleContinue = () => {
     if (name) {
-      router.push("/(tabs)/data-gathering");
+      router.push("/data-gathering");
     }
   };
 
   return (
     <View style={[styles.container]}>
       <Image
-        source={require("../../assets/images/favicon.png")}
+        source={require("@/assets/images/favicon.png")}
         style={styles.logo}
         resizeMode="contain"
       />

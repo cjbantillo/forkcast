@@ -1,13 +1,12 @@
-// filepath: c:\Users\Christian James\Desktop\mobile-meal-planner\app\_layout.tsx
 import React from "react";
-import { Stack } from "expo-router";
+import { Tabs } from "expo-router";
 
-export default function RootLayout() {
+export default function TabsLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      {/* Hide the back button for the index screen --turn to true if you want to know the header*/}
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="data-gathering" options={{ title: "Data Gathering" }} />
-    </Stack>
+    <Tabs screenOptions={{ headerShown: false }}>
+      {/* Swap the order of the screens */}
+      <Tabs.Screen name="discover" options={{ title: "Discover" }} />
+      <Tabs.Screen name="planner" options={{ title: "Planner" }} />
+    </Tabs>
   );
 }
