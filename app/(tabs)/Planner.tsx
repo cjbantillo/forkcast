@@ -26,8 +26,12 @@ const PlannerScreen = () => {
     <View style={[styles.container, { backgroundColor }]}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={[styles.editButton, { backgroundColor: accentColor }]}>
-          <Text style={[styles.editButtonText, { color: "#FFFFFF" }]}>Edit Day</Text>
+        <TouchableOpacity
+          style={[styles.editButton, { backgroundColor: accentColor }]}
+        >
+          <Text style={[styles.editButtonText, { color: "#FFFFFF" }]}>
+            Edit Day
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity>
           <Text style={[styles.menuIcon, { color: textColor }]}>⋮</Text>
@@ -47,23 +51,34 @@ const PlannerScreen = () => {
       </View>
 
       {/* Subtitle */}
-      <Text style={[styles.subtitle, { color: textColor }]}>What are we eating today?</Text>
+      <Text style={[styles.subtitle, { color: textColor }]}>
+        What are we eating today?
+      </Text>
 
       {/* Buttons */}
       <ModernButton
         title="Generate"
         onPress={handleGenerate}
-        style={StyleSheet.flatten([styles.button, { backgroundColor: accentColor }])}
+        style={StyleSheet.flatten([
+          styles.button,
+          { backgroundColor: accentColor, borderColor: accentColor },
+        ])}
       />
       <ModernButton
         title="Copy Previous"
         onPress={handleCopyPrevious}
-        style={StyleSheet.flatten([styles.secondaryButton, { borderColor: textColor }])}
+        style={StyleSheet.flatten([
+          styles.button,
+          { backgroundColor: accentColor, borderColor: accentColor },
+        ])}
       />
       <ModernButton
         title="Plan Manually"
         onPress={handlePlanManually}
-        style={StyleSheet.flatten([styles.secondaryButton, { borderColor: textColor }])}
+        style={StyleSheet.flatten([
+          styles.button,
+          { backgroundColor: accentColor, borderColor: accentColor },
+        ])}
       />
     </View>
   );
@@ -123,6 +138,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     marginBottom: 10,
+    borderWidth: 1, // Add border for uniformity
   },
   secondaryButton: {
     width: "80%",

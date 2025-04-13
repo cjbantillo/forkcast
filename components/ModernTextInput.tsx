@@ -1,27 +1,32 @@
 import React from "react";
 import { TextInput, StyleSheet, TextStyle } from "react-native";
+import { useThemeColor } from "../hooks/useThemeColor";
 
 interface ModernTextInputProps {
   label?: string;
   value: string;
   onChangeText: (text: string) => void;
-  placeholder?: string; // Add placeholder as a prop
+  placeholder?: string;
   style?: TextStyle;
 }
 
 export default function ModernTextInput({
   value,
   onChangeText,
-  placeholder = "Enter text", // Default placeholder
+  placeholder = "Enter text",
   style,
 }: ModernTextInputProps) {
+  const backgroundColor = useThemeColor({}, "surface");
+  const textColor = useThemeColor({}, "inputText");
+  const placeholderColor = useThemeColor({}, "placeholder");
+
   return (
     <TextInput
       value={value}
       onChangeText={onChangeText}
-      placeholder={placeholder} // Use the dynamic placeholder
-      placeholderTextColor="#aaa"
-      style={[styles.input, style]}
+      placeholder={placeholder}
+      placeholderTextColor={placeholderColor}
+      style={[styles.input, { backgroundColor, color: textColor }, style]}
     />
   );
 }
@@ -31,8 +36,6 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 10,
     borderRadius: 8,
-    backgroundColor: "#292C35",
-    color: "#fff",
     fontSize: 16,
   },
 });

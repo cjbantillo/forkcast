@@ -20,12 +20,12 @@ const DataGathering = () => {
   const handleContinue = () => {
     if (age && gender && height && weight) {
       console.log({ age, gender, height, weight }); // Replace with navigation or API call
-      router.push("/(tabs)/PlannerScreen"); // Navigate to the planner screen
+      router.push("/(tabs)/Planner"); // Navigate to the planner screen
     }
   };
 
   return (
-    <View style={[styles.container]}>
+    <View style={[styles.container, { backgroundColor }]}>
       <Image
         source={require("@/assets/images/favicon.png")}
         style={styles.logo}
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#17181D", // Changed to match the dark mode background
+    // backgroundColor: "#17181D", // Changed to match the dark mode background
   },
   title: {
     fontSize: 28,

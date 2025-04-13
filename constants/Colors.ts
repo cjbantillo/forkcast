@@ -1,6 +1,5 @@
 const Colors = {
-  dark: 
-  {
+  dark: {
     background: "#17181D",
     text: "#ffffff",
     accent: "#E69145",
@@ -12,14 +11,14 @@ const Colors = {
   },
 
   light: {
-    background: "#17181D",
-    text: "#E69145",
-    accent: "#E69145",
-    primary: "#E69145", // Changed from "button" to match codebase
-    buttonText: "#ffffff",
-    surface: "#f0f0f0", // Changed from "inputBackground" to match codebase
-    inputText: "#000000",
-    placeholder: "#00000080", // Added for input placeholders
+    background: "#ffffff", // Opposite of dark background
+    text: "#17181D", // Opposite of dark text
+    accent: "#E69145", // Keep accent consistent
+    primary: "#E69145", // Keep primary consistent
+    buttonText: "#17181D", // Opposite of dark buttonText
+    surface: "#f0f0f0", // Light surface for contrast
+    inputText: "#000000", // Black for input text
+    placeholder: "#00000080", // Semi-transparent black for placeholders
   },
 };
 

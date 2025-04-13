@@ -10,6 +10,7 @@ export default function RootLayout() {
 
       {/* Define other routes without bottom navigation */}
       <Stack.Screen name="data-gathering" options={{ title: "Data Gathering" }} />
+      <Stack.Screen name="backupindex" options={{ title: "Backup Index" }} />
     </Stack>
   );
 }

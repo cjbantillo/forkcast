@@ -20,7 +20,7 @@ export default function Index() {
   };
 
   return (
-    <View style={[styles.container]}>
+    <View style={[styles.container, { backgroundColor }]}>
       <Image
         source={require("@/assets/images/favicon.png")}
         style={styles.logo}
@@ -41,7 +41,10 @@ export default function Index() {
         title="Continue"
         onPress={handleContinue}
         disabled={!name}
-        style={StyleSheet.flatten([styles.button, styles.accentButton])}
+        style={StyleSheet.flatten([
+          styles.button,
+          { backgroundColor: accentColor },
+        ])}
       />
     </View>
   );
@@ -53,7 +56,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#17181D", // Changed to match the dark mode background
   },
   logo: {
     width: 150,
@@ -74,18 +76,11 @@ const styles = StyleSheet.create({
   input: {
     width: "80%",
     marginBottom: 40,
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: "#292C35", // Moved from inline style
-    color: "#FFFFFF", // Moved from inline style
   },
   button: {
     width: "80%",
     padding: 15,
     borderRadius: 8,
     alignItems: "center",
-  },
-  accentButton: {
-    backgroundColor: "#E69145", // Moved from inline style
   },
 });
