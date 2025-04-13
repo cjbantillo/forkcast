@@ -1,26 +1,24 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
-
-export const Colors = {
-  light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
-  },
-  dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
-  },
-};
+const Colors = {
+    light: {
+      background: "#ffffff",
+      text: "#000000",
+      accent: "#FCD988",
+      primary: "#E69145", // Changed from "button" to match codebase
+      buttonText: "#ffffff",
+      surface: "#f0f0f0", // Changed from "inputBackground" to match codebase
+      inputText: "#000000",
+      placeholder: "#00000080", // Added for input placeholders
+    },
+    dark: {
+      background: "#17181D",
+      text: "#ffffff",
+      accent: "#FCD988",
+      primary: "#E69145", // Changed from "button"
+      buttonText: "#ffffff",
+      surface: "#292C35", // Corrected from "#292929" to match original spec
+      inputText: "#ffffff",
+      placeholder: "#FFFFFF80", // Added for input placeholders
+    },
+  };
+  
+  export default Colors;

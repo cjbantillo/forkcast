@@ -1,39 +1,41 @@
-import React from "react";
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import React from 'react';
+import { TouchableOpacity, Text, StyleSheet, ViewStyle } from 'react-native';
 
 interface ModernButtonProps {
   title: string;
   onPress: () => void;
+  disabled?: boolean;
+  style?: ViewStyle;
 }
 
-const ModernButton: React.FC<ModernButtonProps> = ({ title, onPress }) => {
+export default function ModernButton({ title, onPress, disabled, style }: ModernButtonProps) {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Text style={styles.buttonText}>{title}</Text>
+    <TouchableOpacity
+      style={[styles.button, style, disabled && styles.disabled]}
+      onPress={onPress}
+      disabled={disabled}
+    >
+      <Text style={styles.text}>{title}</Text>
     </TouchableOpacity>
   );
-};
+}
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#E69A45", // Gold color from palette
-    paddingVertical: 20,
-    paddingHorizontal: 50,
-    borderRadius: 30, // Fully rounded button
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#17181D",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
+    backgroundColor: '#E69145',
+    borderRadius: 50,
+    width: 100,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
     elevation: 5,
-    marginVertical: 10,
   },
-  buttonText: {
-    fontSize: 18,
-    color: "#17181D", // Dark text
-    fontWeight: "bold",
+  text: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  disabled: {
+    backgroundColor: '#ccc',
   },
 });
-
-export default ModernButton;
