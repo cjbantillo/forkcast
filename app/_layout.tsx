@@ -4,7 +4,7 @@ export default function RootLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       {/* Hide the back button for the index screen */}
-      <Stack.Screen name="index" options={{ headerBackVisible: false }} />
+      <Stack.Screen name="(tabs)" options={{ headerBackVisible: false }} />
     </Stack>
   );
 }

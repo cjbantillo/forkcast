@@ -9,26 +9,25 @@ import { useThemeColor } from "../../hooks/useThemeColor";
 export default function Index() {
   const [name, setName] = useState("");
 
-  // Dynamically retrieve theme-based colors
-  const backgroundColor = useThemeColor({}, "background"); // #17181D in dark mode
-  const textColor = useThemeColor({}, "text"); // #FFFFFF in dark mode
-  const accentColor = useThemeColor({}, "accent"); // #FCD988 in both modes
+  const backgroundColor = useThemeColor({}, "background");
+  const textColor = useThemeColor({}, "text");
+  const accentColor = useThemeColor({}, "accent");
 
   const handleContinue = () => {
     if (name) {
-      router.push("/(tabs)/data-gathering"); // Navigate to the next screen
+      router.push("/(tabs)/data-gathering");
     }
   };
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
+    <View style={[styles.container]}>
       <Image
         source={require("../../assets/images/favicon.png")}
         style={styles.logo}
         resizeMode="contain"
       />
       <Text style={[styles.title, { color: textColor }]}>
-        Welcome to ForkCast*
+        Welcome to ForkCast
       </Text>
       <Text style={[styles.subtext, { color: accentColor }]}>
         Let's personalize your meal plan!
@@ -36,13 +35,13 @@ export default function Index() {
       <ModernTextInput
         value={name}
         onChangeText={setName}
-        style={[styles.input, { backgroundColor: "#292C35", color: textColor }]} // Dark input background
+        style={styles.input}
       />
       <ModernButton
         title="Continue"
         onPress={handleContinue}
         disabled={!name}
-        style={[styles.button, { backgroundColor: accentColor }]} // Accent color for button
+        style={StyleSheet.flatten([styles.button, styles.accentButton])}
       />
     </View>
   );
@@ -54,6 +53,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
+    backgroundColor: "#17181D", // Changed to match the dark mode background
   },
   logo: {
     width: 150,
@@ -76,11 +76,16 @@ const styles = StyleSheet.create({
     marginBottom: 40,
     padding: 10,
     borderRadius: 8,
+    backgroundColor: "#292C35", // Moved from inline style
+    color: "#FFFFFF", // Moved from inline style
   },
   button: {
     width: "80%",
     padding: 15,
     borderRadius: 8,
     alignItems: "center",
+  },
+  accentButton: {
+    backgroundColor: "#E69145", // Moved from inline style
   },
 });

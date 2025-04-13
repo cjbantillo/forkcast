@@ -1,11 +1,11 @@
 import React from 'react';
-import { TextInput, StyleSheet, ViewStyle } from 'react-native';
+import { TextInput, StyleSheet, TextStyle } from 'react-native';
 
 interface ModernTextInputProps {
   label?: string;
   value: string;
   onChangeText: (text: string) => void;
-  style?: ViewStyle;
+  style?: TextStyle;
 }
 
 export default function ModernTextInput({ value, onChangeText, style }: ModernTextInputProps) {
