@@ -1,7 +1,7 @@
 import { useColorScheme } from "react-native";
 import Colors from "../constants/Colors";
 
-type Theme = "light" | "dark";
+type Theme = "dark" | "light";
 
 /**
  * A custom hook to retrieve theme-specific colors.
@@ -10,10 +10,10 @@ type Theme = "light" | "dark";
  * @returns The color value based on the current theme.
  */
 export function useThemeColor(
-  props: { light?: string; dark?: string },
+  props: { dark?: string; light?: string },
   colorName: keyof typeof Colors.light & keyof typeof Colors.dark
 ) {
-  const theme: Theme = useColorScheme() || "light";
+  const theme: Theme = useColorScheme() || "dark";
 
   const colorFromProps = props[theme];
   if (colorFromProps) {

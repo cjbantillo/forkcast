@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import { Text } from "react-native-paper";
 import ModernButton from "../../components/ModernButton";
 import ModernTextInput from "../../components/ModernTextInput";
@@ -24,33 +24,44 @@ const DataGathering = () => {
 
   return (
     <View style={[styles.container]}>
+        <Image
+              source={require("../../assets/images/favicon.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+      
       <Text style={[styles.title, { color: textColor }]}>
         Tell us about yourself
       </Text>
+      {/* age  */}
       <ModernTextInput
         value={age}
         onChangeText={setAge}
         placeholder="Enter your age"
         style={styles.input}
       />
-      <View style={styles.dropdownContainer}>
-        <Picker
-          selectedValue={gender}
-          onValueChange={(itemValue) => setGender(itemValue)}
-          style={[styles.dropdown, { color: textColor }]}
-        >
-          <Picker.Item label="Select Gender" value="" />
-          <Picker.Item label="Male" value="male" />
-          <Picker.Item label="Female" value="female" />
-          <Picker.Item label="Other" value="other" />
-        </Picker>
-      </View>
+      {/* gender */}
+      <View style={[styles.dropdownContainer, { backgroundColor: "#292C35" }]}>
+  <Picker
+    selectedValue={gender}
+    onValueChange={(itemValue) => setGender(itemValue)}
+    style={[styles.dropdown, { color: "#292C35" }]} // Text color for dropdown items
+    dropdownIconColor="#292C35" // Dropdown arrow color
+  >
+    <Picker.Item label="Select Gender" value="" />
+    <Picker.Item label="Male" value="male" />
+    <Picker.Item label="Female" value="female" />
+    <Picker.Item label="Other" value="other" />
+  </Picker>
+</View>
+      {/* height */}
       <ModernTextInput
         value={height}
         onChangeText={setHeight}
         placeholder="Enter your height (cm)"
         style={styles.input}
       />
+      {/* weight */}
       <ModernTextInput
         value={weight}
         onChangeText={setWeight}
@@ -61,7 +72,7 @@ const DataGathering = () => {
         title="Continue"
         onPress={handleContinue}
         disabled={!age || !gender || !height || !weight}
-        style={[styles.button, { backgroundColor: accentColor }]}
+        style={StyleSheet.flatten([styles.button, { backgroundColor: accentColor }])}
       />
     </View>
   );
@@ -105,7 +116,11 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     alignItems: "center",
-  },
+  },logo: {
+    width: 150,
+    height: 150,
+    marginBottom: 40,
+  }
 });
 
 export default DataGathering;
