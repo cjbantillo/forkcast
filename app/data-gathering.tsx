@@ -1,26 +1,51 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Image } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, Image, Alert } from "react-native";
 import { Text } from "react-native-paper";
 import ModernButton from "../components/ModernButton";
 import ModernTextInput from "../components/ModernTextInput";
 import { useThemeColor } from "../hooks/useThemeColor";
 import { Picker } from "@react-native-picker/picker";
 import { router } from "expo-router";
+import { auth, logout } from "../firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
 
 const DataGathering = () => {
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
+  const [user, setUser] = useState(null);
 
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const accentColor = useThemeColor({}, "accent");
 
+  // Track user session
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        router.push("/"); // Redirect to login if not authenticated
+      }
+    });
+    return unsubscribe;
+  }, []);
+
   const handleContinue = () => {
     if (age && gender && height && weight) {
       console.log({ age, gender, height, weight }); // Replace with navigation or API call
       router.push("/(tabs)/Planner"); // Navigate to the planner screen
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      Alert.alert("Logged out", "You have been logged out successfully.");
+      router.push("/"); // Redirect to login screen
+    } catch (error) {
+      console.error("Logout Error:", error);
     }
   };
 
@@ -79,6 +104,15 @@ const DataGathering = () => {
           { backgroundColor: accentColor },
         ])}
       />
+      {/* Logout Button */}
+      <ModernButton
+        title="Logout"
+        onPress={handleLogout}
+        style={StyleSheet.flatten([
+          styles.button,
+          { backgroundColor: "#FF3B30", marginTop: 20 },
+        ])}
+      />
     </View>
   );
 };
@@ -89,7 +123,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    // backgroundColor: "#17181D", // Changed to match the dark mode background
   },
   title: {
     fontSize: 28,

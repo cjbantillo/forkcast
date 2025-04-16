@@ -2,32 +2,27 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   Image,
 } from "react-native";
-import { useThemeColor } from "@/hooks/useThemeColor";
 import { useRouter } from "expo-router";
-
-const textColor = useThemeColor({}, "text");
-const accentColor = useThemeColor({}, "accent");
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../firebaseConfig";
 
 export default function AuthPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const router = useRouter(); // Import the router hook
+  const router = useRouter();
 
-  const handleSignIn = () => {
-    // Handle email/password sign-in logic
-    console.log("Email:", email, "Password:", password);
-
-    // Navigate to nickname.tsx
-    router.push("/nickname");
-  };
-  const handleGoogleSignIn = () => {
-    // Handle Google sign-in logic
-    console.log("Sign in with Google");
+  const handleGoogleSignIn = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      console.log("User signed in:", user);
+      router.push("/data-gathering");
+    } catch (error) {
+      console.error("Google Sign-In Error:", error);
+    }
   };
 
   return (
@@ -37,38 +32,8 @@ export default function AuthPage() {
         style={styles.logo}
         resizeMode="contain"
       />
-      <Text style={[styles.title, { color: textColor }]}>
-        Welcome to ForkCast
-      </Text>
-      <Text style={[styles.subtext, { color: accentColor }]}>
-        Let's personalize your meal plan!
-      </Text>
-
-      {/* Email Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#aaa"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-
-      {/* Password Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        placeholderTextColor="#aaa"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-
-      {/* Sign In Button */}
-      <TouchableOpacity style={styles.button} onPress={handleSignIn}>
-        <Text style={styles.buttonText}>Sign In</Text>
-      </TouchableOpacity>
+      <Text style={styles.title}>Welcome to ForkCast</Text>
+      <Text style={styles.subtext}>Let's personalize your meal plan!</Text>
 
       {/* Sign in with Google */}
       <TouchableOpacity
@@ -95,27 +60,11 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     marginBottom: 20,
   },
-  input: {
-    width: "100%",
-    padding: 15,
-    borderRadius: 8,
-    backgroundColor: "#292C35",
-    color: "#ffffff",
-    marginBottom: 15,
+  subtext: {
     fontSize: 16,
-  },
-  button: {
-    width: "100%",
-    padding: 15,
-    borderRadius: 8,
-    backgroundColor: "#E69145",
-    alignItems: "center",
-    marginBottom: 15,
-  },
-  buttonText: {
-    color: "#ffffff",
-    fontSize: 16,
-    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 40,
+    color: "#E69145",
   },
   googleButton: {
     width: "100%",
@@ -132,11 +81,6 @@ const styles = StyleSheet.create({
   logo: {
     width: 150,
     height: 150,
-    marginBottom: 40,
-  },
-  subtext: {
-    fontSize: 16,
-    textAlign: "center",
     marginBottom: 40,
   },
 });
