@@ -1,25 +1,47 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { Text } from "react-native-paper";
+import React, { useState, useEffect, useContext } from "react";
+import {
+  View,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Modal,
+  Text,
+  Alert,
+} from "react-native";
 import ModernButton from "../../components/ModernButton";
 import { useThemeColor } from "../../hooks/useThemeColor";
+import { auth, logout } from "../../firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "expo-router";
 
 const PlannerScreen = () => {
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [userName, setUserName] = useState("");
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const accentColor = useThemeColor({}, "accent");
+  const router = useRouter();
 
-  const handleGenerate = () => {
-    console.log("Generate meal plan using MealDB API");
-    // Add API call logic here
-  };
+  // Track the authenticated user
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserName(user.displayName || "User"); // Use displayName or fallback to "User"
+      } else {
+        router.push("/"); // Redirect to login if not authenticated
+      }
+    });
+    return unsubscribe;
+  }, []);
 
-  const handleCopyPrevious = () => {
-    console.log("Copy previous meal plan");
-  };
-
-  const handlePlanManually = () => {
-    console.log("Plan meals manually");
+  const handleLogout = async () => {
+    try {
+      await logout();
+      Alert.alert("Logged out", "You have been logged out successfully.");
+      router.push("/"); // Redirect to login screen
+    } catch (error) {
+      console.error("Logout Error:", error);
+    }
   };
 
   return (
@@ -33,10 +55,34 @@ const PlannerScreen = () => {
             Edit Day
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => setMenuVisible(true)}>
           <Text style={[styles.menuIcon, { color: textColor }]}>⋮</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Menu Modal */}
+      <Modal
+        visible={menuVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setMenuVisible(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          onPress={() => setMenuVisible(false)}
+        >
+          <View style={[styles.menuContainer, { backgroundColor }]}>
+            <Text style={[styles.menuItem, { color: textColor }]}>
+              Hello, {userName}
+            </Text>
+            <TouchableOpacity onPress={handleLogout}>
+              <Text style={[styles.menuItem, { color: "#FF3B30" }]}>
+                Logout
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
 
       {/* Title */}
       <Text style={[styles.title, { color: textColor }]}>Today</Text>
@@ -58,7 +104,7 @@ const PlannerScreen = () => {
       {/* Buttons */}
       <ModernButton
         title="Generate"
-        onPress={handleGenerate}
+        onPress={() => console.log("Generate meal plan")}
         style={StyleSheet.flatten([
           styles.button,
           { backgroundColor: accentColor, borderColor: accentColor },
@@ -66,7 +112,7 @@ const PlannerScreen = () => {
       />
       <ModernButton
         title="Copy Previous"
-        onPress={handleCopyPrevious}
+        onPress={() => console.log("Copy previous meal plan")}
         style={StyleSheet.flatten([
           styles.button,
           { backgroundColor: accentColor, borderColor: accentColor },
@@ -74,7 +120,7 @@ const PlannerScreen = () => {
       />
       <ModernButton
         title="Plan Manually"
-        onPress={handlePlanManually}
+        onPress={() => console.log("Plan meals manually")}
         style={StyleSheet.flatten([
           styles.button,
           { backgroundColor: accentColor, borderColor: accentColor },
@@ -140,13 +186,21 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderWidth: 1, // Add border for uniformity
   },
-  secondaryButton: {
-    width: "80%",
-    padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
-    marginBottom: 10,
-    borderWidth: 1,
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
+  },
+  menuContainer: {
+    width: "100%",
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  menuItem: {
+    fontSize: 18,
+    paddingVertical: 10,
+    textAlign: "center",
   },
 });
 
