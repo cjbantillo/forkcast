@@ -5,13 +5,7 @@ import ModernButton from "../components/ModernButton";
 import ModernTextInput from "../components/ModernTextInput";
 import { useThemeColor } from "../hooks/useThemeColor";
 import { Picker } from "@react-native-picker/picker";
-<<<<<<< HEAD
 import { useRouter } from "expo-router";
-=======
-import { router } from "expo-router";
-import { auth, logout } from "../firebaseConfig";
-import { onAuthStateChanged } from "firebase/auth";
->>>>>>> bc6f397ed7111e95732b6923c83c1fd16a873820
 
 const DataGathering = () => {
   const [age, setAge] = useState("");
@@ -24,7 +18,6 @@ const DataGathering = () => {
   const textColor = useThemeColor({}, "text");
   const accentColor = useThemeColor({}, "accent");
 
-<<<<<<< HEAD
   const router = useRouter();
 
   const handleContinue = () => {
@@ -42,34 +35,6 @@ const DataGathering = () => {
               resizeMode="contain"
             />
       
-=======
-
-  const handleContinue = () => {
-    if (age && gender && height && weight) {
-      console.log({ age, gender, height, weight }); // Replace with navigation or API call
-      router.push("/(tabs)/Planner"); // Navigate to the planner screen
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      Alert.alert("Logged out", "You have been logged out successfully.");
-      router.push("/"); // Redirect to login screen
-    } catch (error) {
-      console.error("Logout Error:", error);
-    }
-  };
-
-  return (
-    <View style={[styles.container, { backgroundColor }]}>
-      <Image
-        source={require("@/assets/images/favicon.png")}
-        style={styles.logo}
-        resizeMode="contain"
-      />
-
->>>>>>> bc6f397ed7111e95732b6923c83c1fd16a873820
       <Text style={[styles.title, { color: textColor }]}>
         Tell us about yourself
       </Text>
@@ -111,25 +76,8 @@ const DataGathering = () => {
       <ModernButton
         title="Continue"
         onPress={handleContinue}
-<<<<<<< HEAD
         // disabled={!age || !gender || !height || !weight}
         style={StyleSheet.flatten([styles.button, { backgroundColor: accentColor }])}
-=======
-        disabled={!age || !gender || !height || !weight}
-        style={StyleSheet.flatten([
-          styles.button,
-          { backgroundColor: accentColor },
-        ])}
-      />
-      {/* Logout Button */}
-      <ModernButton
-        title="Logout"
-        onPress={handleLogout}
-        style={StyleSheet.flatten([
-          styles.button,
-          { backgroundColor: "#FF3B30", marginTop: 20 },
-        ])}
->>>>>>> bc6f397ed7111e95732b6923c83c1fd16a873820
       />
     </View>
   );
