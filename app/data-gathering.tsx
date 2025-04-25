@@ -5,6 +5,7 @@ import ModernButton from "../components/ModernButton";
 import ModernTextInput from "../components/ModernTextInput";
 import { useThemeColor } from "../hooks/useThemeColor";
 import { Picker } from "@react-native-picker/picker";
+import { useRouter } from "expo-router";
 
 const DataGathering = () => {
   const [age, setAge] = useState("");
@@ -16,10 +17,13 @@ const DataGathering = () => {
   const textColor = useThemeColor({}, "text");
   const accentColor = useThemeColor({}, "accent");
 
+  const router = useRouter();
+
   const handleContinue = () => {
-    if (age && gender && height && weight) {
-      console.log({ age, gender, height, weight }); // Replace with navigation or API call
-    }
+    // if (age && gender && height && weight) {
+    //   console.log({ age, gender, height, weight }); // Replace with navigation or API call
+    // }
+    router.push("/(tabs)/Home"); // Navigate to the dashboard screen
   };
 
   return (
@@ -71,7 +75,7 @@ const DataGathering = () => {
       <ModernButton
         title="Continue"
         onPress={handleContinue}
-        disabled={!age || !gender || !height || !weight}
+        // disabled={!age || !gender || !height || !weight}
         style={StyleSheet.flatten([styles.button, { backgroundColor: accentColor }])}
       />
     </View>

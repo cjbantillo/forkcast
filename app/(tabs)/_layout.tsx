@@ -1,12 +1,38 @@
-// filepath: c:\Users\Christian James\Desktop\mobile-meal-planner\app\_layout.tsx
 import React from "react";
 import { Tabs } from "expo-router";
 
-export default function RootLayout() {
+export default function TabsLayout() {
   return (
-    <Tabs screenOptions={{ headerShown: false }}>
-      {/* Hide the back button for the index screen --turn to true if you want to know the header*/}
-      
+    <Tabs
+      screenOptions={{
+        tabBarStyle: { backgroundColor: "#17181D" },
+        tabBarActiveTintColor: "#E69145",
+        tabBarInactiveTintColor: "#ffffff",
+        headerShown: false,
+      }}
+    >
+      <Tabs.Screen
+        name="Home"
+        options={{
+          tabBarLabel: "Home",
+          tabBarIcon: () => null, // Add icons later if needed
+        }}
+      />
+ 
+      <Tabs.Screen
+        name="Recipe"
+        options={{
+          tabBarLabel: "Recipe",
+          tabBarIcon: () => null,
+        }}
+      />
+      <Tabs.Screen
+        name="Profile"
+        options={{
+          tabBarLabel: "Profile",
+          tabBarIcon: () => null,
+        }}
+      />
     </Tabs>
   );
 }
