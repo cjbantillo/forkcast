@@ -7,6 +7,15 @@ import HomeScreen from "@/screens/HomeScreen";
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
+  const styles = StyleSheet.create({
+    // Existing styles...
+    errorText: {
+      color: 'red', // You can change this to your preferred color
+      marginTop: 5,
+      fontSize: 12,
+    },
+  });
+  
   useEffect(() => {
     async function prepare() {
       await SplashScreen.preventAutoHideAsync(); 
