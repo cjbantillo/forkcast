@@ -20,17 +20,6 @@ const DataGathering = () => {
   const textColor = useThemeColor({}, "text");
   const accentColor = useThemeColor({}, "accent");
 
-  // Track user session
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-      } else {
-        router.push("/"); // Redirect to login if not authenticated
-      }
-    });
-    return unsubscribe;
-  }, []);
 
   const handleContinue = () => {
     if (age && gender && height && weight) {

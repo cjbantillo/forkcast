@@ -3,6 +3,7 @@ import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
 import ModernButton from "../../components/ModernButton";
 import { useThemeColor } from "../../hooks/useThemeColor";
+import { router } from "expo-router";
 
 const PlannerScreen = () => {
   const backgroundColor = useThemeColor({}, "background");
@@ -16,6 +17,7 @@ const PlannerScreen = () => {
 
   const handleCopyPrevious = () => {
     console.log("Copy previous meal plan");
+    router.push("/copy-previous")
   };
 
   const handlePlanManually = () => {
@@ -44,7 +46,7 @@ const PlannerScreen = () => {
       {/* Image Placeholder */}
       <View style={styles.imageContainer}>
         <Image
-          source={require("../../assets/images/favicon1.png")} // Replace with your image later
+          source={require("../../assets/images/ForkCast.png")} // Replace with your image later
           style={styles.image}
           resizeMode="contain"
         />
