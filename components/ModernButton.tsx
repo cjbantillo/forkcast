@@ -1,21 +1,31 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ViewStyle } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 
 interface ModernButtonProps {
   title: string;
   onPress: () => void;
   disabled?: boolean;
   style?: ViewStyle;
+  textStyle?: TextStyle; // New prop for text styling
+  disabledTextColor?: string; // New prop for disabled text color
 }
 
-export default function ModernButton({ title, onPress, disabled, style }: ModernButtonProps) {
+export default function ModernButton({ title, onPress, disabled, style, textStyle,
+  disabledTextColor = 'black' // Default disabled text color
+}: ModernButtonProps) {
   return (
     <TouchableOpacity
       style={[styles.button, style, disabled && styles.disabled]}
       onPress={onPress}
       disabled={disabled}
     >
-      <Text style={styles.text}>{title}</Text>
+      <Text style={[
+        styles.text, 
+        textStyle,
+        disabled && { color: disabledTextColor } // Apply disabled text color
+      ]}>
+        {title}
+      </Text>
     </TouchableOpacity>
   );
 }

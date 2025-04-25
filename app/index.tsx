@@ -13,11 +13,7 @@ export default function Index() {
   const textColor = useThemeColor({}, "text");
   const accentColor = useThemeColor({}, "accent");
 
-  const handleContinue = () => {
-    if (name) {
-      router.push("/(tabs)/data-gathering");
-    }
-  };
+  
 
   return (
     <View style={[styles.container]}>

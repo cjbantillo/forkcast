@@ -24,17 +24,18 @@ const DataGathering = () => {
   const [weightError, setWeightError] = useState('');
   const [ageError, setAgeError] = useState('');
 
+  /* Uncomment to enable Auth*/
   // Track user session
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-      } else {
-        router.push("/"); // Redirect to login if not authenticated
-      }
-    });
-    return unsubscribe;
-  }, []);
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+  //     if (currentUser) {
+  //       setUser(currentUser);
+  //     } else {
+  //       router.push("/"); // Redirect to login if not authenticated
+  //     }
+  //   });
+  //   return unsubscribe;
+  // }, []);
 
   const handleContinue = () => {
     if (age && gender && height && weight) {
@@ -89,12 +90,13 @@ const DataGathering = () => {
       </View>
 
         {/* Gender */}
-        <View style={[styles.dropdownContainer]}>
+        <View style={[styles.dropdownContainer ]}>
           <Picker
             selectedValue={gender}
             onValueChange={(itemValue) => setGender(itemValue)}
             style={[styles.dropdown]}
-            dropdownIconColor="#FFFFFF"
+            dropdownIconColor="#292C35"
+            mode="dropdown" // Added mode
           >
             <Picker.Item label="Select Gender" value="" />
             <Picker.Item label="Male" value="male" />
@@ -156,6 +158,7 @@ const DataGathering = () => {
             styles.button,
             { backgroundColor: accentColor },
           ])}
+          disabledTextColor="gray" // This makes the text gray when disabled
         />
 
         {/* Logout Button */}
@@ -211,15 +214,20 @@ const styles = StyleSheet.create({
   },
   dropdownContainer: {
     width: "100%",
-    marginBottom: 20,
+    marginBottom: 10,
     borderRadius: 8,
-    backgroundColor: "#292C35",
+    backgroundColor: "#292C35", 
     overflow: "hidden",
+    borderWidth: 0, // to remove dropdown border
+    paddingHorizontal: 5,
   },
   dropdown: {
     width: "100%",
     height: 50,
-    color: "#000000",
+    color: "#A9A9A9",
+    backgroundColor:'#292C35',
+    borderWidth: 0, // to remove dropdown border
+    paddingVertical: 10,
   },
   button: {
     width: "100%",
