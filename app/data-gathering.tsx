@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { Text } from "react-native-paper";
-import ModernButton from "../../components/ModernButton";
-import ModernTextInput from "../../components/ModernTextInput";
-import { useThemeColor } from "../../hooks/useThemeColor";
+import ModernButton from "../components/ModernButton";
+import ModernTextInput from "../components/ModernTextInput";
+import { useThemeColor } from "../hooks/useThemeColor";
 import { Picker } from "@react-native-picker/picker";
 
 const DataGathering = () => {
@@ -25,7 +25,7 @@ const DataGathering = () => {
   return (
     <View style={[styles.container]}>
         <Image
-              source={require("../../assets/images/favicon.png")}
+              source={require("@/assets/images/favicon.png")}
               style={styles.logo}
               resizeMode="contain"
             />

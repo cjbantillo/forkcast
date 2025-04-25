@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { Text } from "react-native-paper";
 import { router } from "expo-router";
-import ModernButton from "../../components/ModernButton";
-import ModernTextInput from "../../components/ModernTextInput";
-import { useThemeColor } from "../../hooks/useThemeColor";
+import ModernButton from "@/components/ModernButton";
+import ModernTextInput from "@/components/ModernTextInput";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 export default function Index() {
   const [name, setName] = useState("");
@@ -22,30 +22,21 @@ export default function Index() {
   return (
     <View style={[styles.container]}>
       <Image
-        source={require("../../assets/images/favicon.png")}
+        source={require("@/assets/images/favicon.png")}
         style={styles.logo}
         resizeMode="contain"
       />
       <Text style={[styles.title, { color: textColor }]}>
         Welcome to ForkCast
       </Text>
-      <Text style={[styles.subtext, { color: accentColor }]}>
-        Let's personalize your meal plan!
-      </Text>
-      <ModernTextInput
-        value={name}
-        onChangeText={setName}
-        style={styles.input}
-      />
       <ModernButton
-        title="Continue"
-        onPress={handleContinue}
-        disabled={!name}
+        title="Sign in with Google"
+        onPress={() => router.push("/data-gathering")}
         style={StyleSheet.flatten([styles.button, styles.accentButton])}
       />
-    </View>
-  );
-}
+        </View>
+      );
+    }
 
 const styles = StyleSheet.create({
   container: {
