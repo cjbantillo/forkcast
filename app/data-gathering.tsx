@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Image, Alert } from "react-native";
+import { View, StyleSheet, Image, Alert, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
 import ModernButton from "../components/ModernButton";
 import ModernTextInput from "../components/ModernTextInput";
@@ -10,11 +10,18 @@ import { auth, logout } from "../firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import { TextInput } from 'react-native';
 
+// List of allergies for selection
+const ALLERGIES = [
+   'Milk', 'Egg', 'Fish', 'Shellfish', 
+   'Nuts', 'Peanuts', 'Wheat', 'Sesame', 'Soybeans'
+ ];
+
 const DataGathering = () => {
-  const [age, setAge] = useState("");
+  const [birthday, setBirthday] = useState("");
   const [gender, setGender] = useState("");
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
+  const [allergies, setAllergies] = useState<string[]>([]);
   const [user, setUser] = useState(null);
 
   const backgroundColor = useThemeColor({}, "background");
@@ -25,22 +32,22 @@ const DataGathering = () => {
   const [ageError, setAgeError] = useState('');
 
   /* Uncomment to enable Auth*/
-  // Track user session
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-  //     if (currentUser) {
-  //       setUser(currentUser);
-  //     } else {
-  //       router.push("/"); // Redirect to login if not authenticated
-  //     }
-  //   });
-  //   return unsubscribe;
-  // }, []);
+  //  Track user session
+  //  useEffect(() => {
+  //    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+  //      if (currentUser) {
+  //        setUser(currentUser);
+  //      } else {
+  //        router.push("/"); // Redirect to login if not authenticated
+  //      }
+  //    });
+  //    return unsubscribe;
+  //  }, []);
 
   const handleContinue = () => {
-    if (age && gender && height && weight) {
-      console.log({ age, gender, height, weight }); // Replace with navigation or API call
-      router.push("/(tabs)/Planner"); // Navigate to the planner screen
+    if (birthday && gender && height && weight) {
+      console.log({ birthday, gender, height, weight }); // Replace with navigation or API call
+      router.push("/(tabs)/Home"); // Navigate to the planner screen /roberto - edited the push to the correct screen (tabs)/Home
     }
   };
 
@@ -54,6 +61,20 @@ const DataGathering = () => {
     }
   };
 
+  const toggleAllergy = (item: string): void => {
+    if (allergies.includes(item)) {
+      setAllergies(allergies.filter((a) => a !== item));
+    } else {
+      setAllergies([...allergies, item]);
+    }
+  };
+
+  // function toggleAllergy(item: string): void {
+  //   throw new Error("Function not implemented.");
+  // }
+
+  // Removed redundant toggleAllergy function definition
+
   return (
     <View style={[styles.screen, { backgroundColor }]}>
       <View style={styles.container}>
@@ -63,117 +84,94 @@ const DataGathering = () => {
           resizeMode="contain"
         />
 
-        <Text style={[styles.title, { color: textColor }]}>
+        <Text style={[styles.title, { color: '#E2C275' }]}>
           Tell us about yourself
         </Text>
 
-        {/* Age */}
-      <View style={{ flexDirection: 'column', alignItems: 'stretch', width: "100%" }}>
-        <TextInput
-          value={age}
-          onChangeText={(text) => {
-            if (/^\d*$/.test(text)) {
-              setAge(text);
-              setAgeError(''); // Clear error message if valid
-            } else {
-              setAgeError('Please enter a valid age'); // Set error message if invalid
-            }
-          }}
-          placeholder="Enter your age"
-          placeholderTextColor="#A9A9A9"
-          keyboardType="numeric" // Set keyboard type to numeric
-          style={styles.input}
-        />
-        {ageError ? (
-          <Text style={styles.errorText}>{ageError}</Text>
-        ) : null}
-      </View>
+        <View style={styles.row}>
+  {/* Birthday Input */}
+  <TextInput
+    value={birthday}
+    onChangeText={(text) => setBirthday(text)}
+    placeholder="Birthday (YYYY-MM-DD)"
+    placeholderTextColor="#A9A9A9"
+    style={styles.inputHalf}
+  />
 
-        {/* Gender */}
-        <View style={[styles.dropdownContainer ]}>
-          <Picker
-            selectedValue={gender}
-            onValueChange={(itemValue) => setGender(itemValue)}
-            style={[styles.dropdown]}
-            dropdownIconColor="#292C35"
-            mode="dropdown" // Added mode
-          >
-            <Picker.Item label="Select Gender" value="" />
-            <Picker.Item label="Male" value="male" />
-            <Picker.Item label="Female" value="female" />
-            <Picker.Item label="Other" value="other" />
-          </Picker>
-        </View>
+  {/* Gender Dropdown */}
+  <View style={[styles.dropdownContainer, { width: '48%' }]}>
+    <Picker
+      selectedValue={gender}
+      onValueChange={(itemValue) => setGender(itemValue)}
+      style={styles.dropdown}
+      dropdownIconColor="#292C35"
+      mode="dropdown"
+    >
+      <Picker.Item label="Gender" value="" />
+      <Picker.Item label="Male" value="male" />
+      <Picker.Item label="Female" value="female" />
+      <Picker.Item label="Other" value="other" />
+    </Picker>
+  </View>
+</View>
 
-       {/* Height */}
-      <View style={{ flexDirection: 'column', alignItems: 'stretch', width: "100%" }}>
-        <TextInput
-          value={height}
-          onChangeText={(text) => {
-            if (/^\d*\.?\d*$/.test(text)) {
-              setHeight(text);
-              setHeightError('');
-            } else {
-              setHeightError('Please enter a valid height in centimeters.');
-            }
-          }}
-          placeholder="Enter your height (cm)"
-          placeholderTextColor="#A9A9A9"
-          keyboardType="decimal-pad"
-          style={styles.input}
-        />
-        {heightError ? (
-          <Text style={styles.errorText}>{heightError}</Text>
-        ) : null}
-      </View>
+<View style={styles.row}>
+  {/* Height Input */}
+  <TextInput
+    value={height}
+    onChangeText={(text) => setHeight(text)}
+    placeholder="Height (cm)"
+    placeholderTextColor="#A9A9A9"
+    keyboardType="numeric"
+    style={styles.inputHalf}
+  />
 
-        {/* Weight */}
-      <View style={{ flexDirection: 'column', alignItems: 'stretch', width: "100%" }}>
-        <TextInput
-          value={weight}
-          onChangeText={(text) => {
-            if (/^\d*\.?\d*$/.test(text)) {
-              setWeight(text);
-              setWeightError('');
-            } else {
-              setWeightError('Please enter a valid weight in kilograms.');
-            }
-          }}
-          placeholder="Enter your weight (kg)"
-          placeholderTextColor="#A9A9A9"
-          keyboardType="decimal-pad"
-          style={styles.input}
-        />
-        {weightError ? (
-          <Text style={styles.errorText}>{weightError}</Text>
-        ) : null}
-      </View>
+  {/* Weight Input */}
+  <TextInput
+    value={weight}
+    onChangeText={(text) => setWeight(text)}
+    placeholder="Weight (kg)"
+    placeholderTextColor="#A9A9A9"
+    keyboardType="numeric"
+    style={styles.inputHalf}
+  />
+</View>
+
+<Text style={{ color: '#E2C275', marginVertical: 10 }}>
+  Any allergies to this food? Choose any that apply:
+</Text>
+
+<View style={styles.allergyContainer}>
+  {ALLERGIES.map((item) => (
+    <TouchableOpacity
+      key={item}
+      style={[
+        styles.allergyButton,
+        allergies.includes(item) && styles.allergyButtonSelected
+      ]}
+      onPress={() => toggleAllergy(item)}
+    >
+      <Text style={styles.allergyButtonText}>{item}</Text>
+    </TouchableOpacity>
+  ))}
+</View>
 
         {/* Continue Button */}
         <ModernButton
           title="Continue"
           onPress={handleContinue}
-          disabled={!age || !gender || !height || !weight}
+          disabled={!birthday || !gender || !height || !weight}
           style={StyleSheet.flatten([
             styles.button,
             { backgroundColor: accentColor },
           ])}
           disabledTextColor="gray" // This makes the text gray when disabled
         />
-
-        {/* Logout Button */}
-        <ModernButton
-          title="Logout"
-          onPress={handleLogout}
-          style={StyleSheet.flatten([
-            styles.button,
-            { backgroundColor: "#FF3B30", marginTop: 20 },
-          ])}
-        />
       </View>
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   // screen wrapper to center everything globally.
@@ -240,6 +238,42 @@ const styles = StyleSheet.create({
     height: 150,
     marginBottom: 40,
   },
+
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 10,
+  },
+  inputHalf: {
+    height: 50,
+    width: '48%',
+    backgroundColor: '#292C35',
+    borderRadius: 8,
+    padding: 10,
+    color: '#FFFFFF',
+  },
+  allergyContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginVertical: 20,
+  },
+  allergyButton: {
+    backgroundColor: '#292C35',
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    margin: 5,
+  },
+  allergyButtonSelected: {
+    backgroundColor: '#E2C275',
+  },
+  allergyButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+  },
+  
 });
 
 export default DataGathering;

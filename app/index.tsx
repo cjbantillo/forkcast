@@ -22,9 +22,13 @@ export default function Index() {
         style={styles.logo}
         resizeMode="contain"
       />
-      <Text style={[styles.title, { color: textColor }]}>
-        Welcome to ForkCast
+      <Text style={[styles.title, { color: '#E2C275' }]}>
+         "Welcome to ForkCast"
       </Text>
+      <Text style={[styles.title, { color: '#E2C275' }]}>
+         "Let's personalize your meal plan!"
+      </Text>
+
       <ModernButton
         title="Sign in with Google"
         onPress={() => router.push("/data-gathering")}
@@ -45,13 +49,13 @@ const styles = StyleSheet.create({
   logo: {
     width: 150,
     height: 150,
-    marginBottom: 40,
+    marginBottom: 10,
   },
   title: {
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
-    marginBottom: 10,
+    marginBottom: 15,
   },
   subtext: {
     fontSize: 16,
@@ -67,9 +71,9 @@ const styles = StyleSheet.create({
     color: "#FFFFFF", // Moved from inline style
   },
   button: {
-    width: "80%",
+    width: "50%",
     padding: 15,
-    borderRadius: 8,
+    borderRadius: 10,
     alignItems: "center",
   },
   accentButton: {
