@@ -19,7 +19,7 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="Browse_recipe"
+        name="Search"
         options={{
           tabBarLabel: "Search",
           tabBarIcon: () => null,

@@ -7,10 +7,21 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+// Need: quick overview of today’s meals and random recipe.
+
 const Dashboard = () => {
+  const todayMeals = "Breakfast: Pancakes, Lunch: Salad, Dinner: Pasta";
+  const randomRecipe = "Spaghetti Carbonara";
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>What Are we Eating?</Text>
+
+      {/* Quick Overview Section */}
+      <View style={styles.overview}>
+        <Text style={styles.overviewText}>Today's Meals: {todayMeals}</Text>
+        <Text style={styles.overviewText}>Random Recipe: {randomRecipe}</Text>
+      </View>
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Today's Meals</Text>
@@ -51,6 +62,22 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
     color: "#ffffff",
+  },
+  overview: {
+    backgroundColor: "#292C35",
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  overviewText: {
+    fontSize: 16,
+    color: "#E69145",
+    marginBottom: 5,
   },
   card: {
     backgroundColor: "#292C35",
