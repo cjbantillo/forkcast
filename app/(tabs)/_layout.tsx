@@ -18,14 +18,22 @@ export default function TabsLayout() {
           tabBarIcon: () => null, // Add icons later if needed
         }}
       />
- 
       <Tabs.Screen
-        name="Recipe"
+        name="Browse_recipe"
         options={{
-          tabBarLabel: "Recipe",
+          tabBarLabel: "Search",
           tabBarIcon: () => null,
         }}
       />
+
+      <Tabs.Screen
+        name="Meal_planner"
+        options={{
+          tabBarLabel: "Meal Plan",
+          tabBarIcon: () => null,
+        }}
+      />
+
       <Tabs.Screen
         name="Favorites"
         options={{
@@ -34,26 +42,13 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="Browse_recipe"
-        options={{
-          tabBarLabel: "Search",
-          tabBarIcon: () => null,
-        }}
-      />
-      <Tabs.Screen
         name="Shopping_list"
         options={{
           tabBarLabel: "Shopping List",
           tabBarIcon: () => null,
-        }} 
-      />
-      <Tabs.Screen
-        name="Meal_planner"
-        options={{
-          tabBarLabel: "Meal Plan",
-          tabBarIcon: () => null,
         }}
       />
+
       <Tabs.Screen
         name="Profile"
         options={{
