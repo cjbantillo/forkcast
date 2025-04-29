@@ -27,6 +27,34 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="Favorites"
+        options={{
+          tabBarLabel: "Favorites",
+          tabBarIcon: () => null,
+        }}
+      />
+      <Tabs.Screen
+        name="Browse_recipe"
+        options={{
+          tabBarLabel: "Search",
+          tabBarIcon: () => null,
+        }}
+      />
+      <Tabs.Screen
+        name="Shopping_list"
+        options={{
+          tabBarLabel: "Shopping List",
+          tabBarIcon: () => null,
+        }} 
+      />
+      <Tabs.Screen
+        name="Meal_planner"
+        options={{
+          tabBarLabel: "Meal Plan",
+          tabBarIcon: () => null,
+        }}
+      />
+      <Tabs.Screen
         name="Profile"
         options={{
           tabBarLabel: "Profile",

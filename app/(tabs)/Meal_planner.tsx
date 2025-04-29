@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const Recipe = () => {
+const Meal_Planner = () => {
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Recipe Screen</Text>
+            <Text style={styles.text}> Meal Planner </Text>
         </View>
     );
 };
@@ -23,4 +23,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Recipe;
+export default Meal_Planner;

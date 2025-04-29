@@ -15,7 +15,7 @@ export default function Index() {
 
   const handleContinue = () => {
     if (name) {
-      router.push("/(tabs)/data-gathering");
+      router.push("/(tabs)/Home");
     }
   };
 

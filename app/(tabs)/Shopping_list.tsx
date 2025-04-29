@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const Recipe = () => {
+const Discover = () => {
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Recipe Screen</Text>
+            <Text style={styles.text}> Shopping List </Text>
         </View>
     );
 };
@@ -23,4 +23,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Recipe;
+export default Discover;
