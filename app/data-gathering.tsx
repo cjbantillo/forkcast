@@ -28,17 +28,17 @@ const DataGathering = () => {
 
   const handleContinue = () => {
     console.log("User data submitted");
-    router.push("/(tabs)/Planner");
+    router.push("/(tabs)/Home");
   };
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
-      <Image
-        source={require("@/assets/images/favicon.png")}
-        style={styles.logo}
-        resizeMode="contain"
-      />
-
+    <View style={[styles.container]}>
+        <Image
+              source={require("@/assets/images/favicon.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+      
       <Text style={[styles.title, { color: textColor }]}>
         Tell us about yourself
       </Text>
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    // backgroundColor: "#17181D", // Changed to match the dark mode background
+    backgroundColor: "#17181D",
   },
   title: {
     fontSize: 28,

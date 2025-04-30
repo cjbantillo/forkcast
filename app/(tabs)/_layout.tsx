@@ -1,25 +1,61 @@
 import React from "react";
 import { Tabs } from "expo-router";
 
-export default function TabLayout() {
+export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: false,
+        tabBarStyle: { backgroundColor: "#17181D" },
         tabBarActiveTintColor: "#E69145",
-        headerStyle: { backgroundColor: "#17181D" },
-        headerTintColor: "#fff",
-        tabBarStyle: {
-          backgroundColor: "#25292e",
-          elevation: 0, // Remove shadow on Android
-          shadowOpacity: 0, // Remove shadow on iOS
-          borderTopWidth: 0, // Remove the top border line
-        },
+        tabBarInactiveTintColor: "#ffffff",
+        headerShown: false,
       }}
     >
-      {/* Define Planner first to make it appear on the left */}
-      <Tabs.Screen name="planner" options={{ title: "Planner" }} />
-      <Tabs.Screen name="discover" options={{ title: "Discover" }} />
+      <Tabs.Screen
+        name="Home"
+        options={{
+          tabBarLabel: "Home",
+          tabBarIcon: () => null, // Add icons later if needed
+        }}
+      />
+      <Tabs.Screen
+        name="Search"
+        options={{
+          tabBarLabel: "Search",
+          tabBarIcon: () => null,
+        }}
+      />
+
+      <Tabs.Screen
+        name="Meal_planner"
+        options={{
+          tabBarLabel: "Meal Plan",
+          tabBarIcon: () => null,
+        }}
+      />
+
+      <Tabs.Screen
+        name="Favorites"
+        options={{
+          tabBarLabel: "Favorites",
+          tabBarIcon: () => null,
+        }}
+      />
+      <Tabs.Screen
+        name="Shopping_list"
+        options={{
+          tabBarLabel: "Shopping List",
+          tabBarIcon: () => null,
+        }}
+      />
+
+      <Tabs.Screen
+        name="Profile"
+        options={{
+          tabBarLabel: "Profile",
+          tabBarIcon: () => null,
+        }}
+      />
     </Tabs>
   );
 }

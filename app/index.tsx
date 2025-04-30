@@ -59,7 +59,7 @@ export default function AuthPage() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container]}>
       <Image
         source={require("@/assets/images/favicon.png")}
         style={styles.logo}
@@ -69,10 +69,9 @@ export default function AuthPage() {
       <Text style={styles.subtext}>Let's personalize your meal plan!</Text>
 
       <TouchableOpacity
-        style={styles.googleButton}
         onPress={handleGoogleSignIn}
       >
-        <Text style={styles.googleButtonText}>Sign in with Google</Text>
+        <Text>Sign in with Google</Text>
       </TouchableOpacity>
     </View>
   );
@@ -92,33 +91,38 @@ const styles = StyleSheet.create({
     backgroundColor: "#17181D",
     padding: 20,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#ffffff",
-    marginBottom: 20,
-  },
-  subtext: {
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 40,
-    color: "#E69145",
-  },
-  googleButton: {
-    width: "100%",
-    padding: 15,
-    borderRadius: 8,
-    backgroundColor: "#ffffff",
-    alignItems: "center",
-  },
-  googleButtonText: {
-    color: "#17181D",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
   logo: {
     width: 150,
     height: 150,
     marginBottom: 40,
   },
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  subtext: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 40,
+  },
+  input: {
+    width: "80%",
+    marginBottom: 40,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: "#292C35", // Moved from inline style
+    color: "#FFFFFF", // Moved from inline style
+  },
+  button: {
+    width: "80%",
+    padding: 15,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  accentButton: {
+    backgroundColor: "#E69145", // Moved from inline style
+  },
 });
+
