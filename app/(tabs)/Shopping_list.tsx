@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { router } from "expo-router";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -6,6 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
+import { AuthContext } from "../_layout";
 
 /*
 Need:
@@ -38,8 +40,15 @@ const favoriteRecipes = [
 const ShoppingList = () => {
   const [groupedShoppingList, setGroupedShoppingList] = useState([]);
 
+  const user = useContext(AuthContext)?.user;
+
   // Group ingredients by recipe
   useEffect(() => {
+    if (!user) {
+      router.replace('/');
+      return;
+    }
+
     const groupedList = favoriteRecipes.map((recipe) => ({
       recipeName: recipe.name,
       ingredients: recipe.ingredients.map((ingredient, index) => ({

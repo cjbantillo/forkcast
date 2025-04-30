@@ -13,7 +13,8 @@ import {
   signInWithPopup,
   onAuthStateChanged,
 } from "firebase/auth";
-import { auth } from "../firebaseConfig";
+import { auth, db } from "../firebaseConfig"; 
+import { doc, setDoc, getDoc } from "firebase/firestore"; 
 import { AuthContext } from "./_layout";
 
 export default function AuthPage() {
@@ -22,29 +23,72 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(true);
   const navigationState = useRootNavigationState();
 
-  // ✅ Wait until router is ready
   useEffect(() => {
     if (!navigationState?.key) return;
 
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const checkProfile = async () => {
+      if (user) {
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data.hasCompletedProfile) {
+            router.replace("/(tabs)/Home");
+          } else {
+            router.replace("/data-gathering");
+          }
+        }
+      }
+    }
+
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        router.replace("/data-gathering");
+        // ✅ Optional: ensure user doc exists
+        const userRef = doc(db, "users", currentUser.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (!userSnap.exists()) {
+          await setDoc(userRef, {
+            user_id: currentUser.uid,
+            created_at: new Date(),
+          });
+        }
+
+        router.push("/data-gathering");
       } else {
         setLoading(false);
       }
     });
 
+    checkProfile();
+
     return () => unsubscribe();
-  }, [navigationState?.key]);
+  }, [navigationState?.key, user]);
 
   const handleGoogleSignIn = async () => {
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
-      console.log("User signed in:", result.user);
-      setUser(result.user);
-      router.replace("/data-gathering");
+      const signedInUser = result.user;
+
+      console.log("User signed in:", signedInUser.uid);
+
+      // ✅ Create user document in Firestore
+      const userRef = doc(db, "users", signedInUser.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          username: signedInUser.displayName,
+          user_id: signedInUser.uid,
+          created_at: new Date(),
+        });
+      }
+
+      setUser(signedInUser);
+      router.push("/data-gathering");
     } catch (error) {
       console.error("Google Sign-In Error:", error);
     }
@@ -68,14 +112,13 @@ export default function AuthPage() {
       <Text style={styles.title}>Welcome to ForkCast</Text>
       <Text style={styles.subtext}>Let's personalize your meal plan!</Text>
 
-      <TouchableOpacity
-        onPress={handleGoogleSignIn}
-      >
+      <TouchableOpacity onPress={handleGoogleSignIn}>
         <Text>Sign in with Google</Text>
       </TouchableOpacity>
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   loadingContainer: {

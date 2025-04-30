@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import { router } from "expo-router";
+import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { AuthContext } from "../_layout";
 
 /*
 Need: Meal Planning
@@ -20,6 +22,15 @@ const MealPlanner = () => {
   const meals = ["Breakfast", "Lunch", "Dinner"];
 
   const [mealPlan, setMealPlan] = useState({});
+  
+  const user = useContext(AuthContext)?.user;
+  
+    useEffect(() => {
+      if (!user) {
+        router.replace('/');
+        return;
+      }
+    });
 
   const handleAddMeal = (day, meal) => {
     Alert.prompt(

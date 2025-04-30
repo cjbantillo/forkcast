@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { router } from "expo-router";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,6 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
+import { AuthContext } from "../_layout";
 
 /*
 Need: Bookmark favorite recipes for quick access.
@@ -30,6 +32,15 @@ const Favorites = () => {
       rating: 4,
     },
   ]);
+
+  const user = useContext(AuthContext)?.user;
+  
+    useEffect(() => {
+      if (!user) {
+        router.replace('/');
+        return;
+      }
+    });
 
   const renderFavorite = ({ item }) => (
     <View style={styles.favoriteItem}>

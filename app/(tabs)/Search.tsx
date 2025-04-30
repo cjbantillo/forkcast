@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { router } from "expo-router";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,6 +9,7 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
+import { AuthContext } from "../_layout";
 /*
 Need: 
 1. Recipe Browsing
@@ -37,6 +39,15 @@ https://www.themealdb.com/api/json/v1/1/list.php?a=list */
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState(""); // State for search input
   const [recipes, setRecipes] = useState([]); // State for fetched recipes
+
+  const user = useContext(AuthContext)?.user;
+  
+    useEffect(() => {
+      if (!user) {
+        router.replace('/');
+        return;
+      }
+    });
 
   const handleSearch = () => {
     // Backend integration: Fetch recipes by name or ingredients

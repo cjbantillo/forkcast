@@ -1,51 +1,155 @@
-import React from "react";
+import { router } from "expo-router";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Modal,
+  TextInput,
+  Alert,
 } from "react-native";
-
-// Need: quick overview of today’s meals and random recipe.
+import { AuthContext } from "../_layout";
+import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 
 const Dashboard = () => {
-  const todayMeals = "Breakfast: Pancakes, Lunch: Salad, Dinner: Pasta";
-  const randomRecipe = "Spaghetti Carbonara";
+  const [mealPlanEmpty, setMealPlanEmpty] = useState(false);
+  const [mealPlan, setMealPlan] = useState<any>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [targetCalories, setTargetCalories] = useState("");
+  const [diet, setDiet] = useState("");
+  const [exclude, setExclude] = useState("");
+
+  const user = useContext(AuthContext)?.user;
+
+  useEffect(() => {
+    if (!user) {
+      router.replace("/");
+      return;
+    }
+
+    const fetchMealPlan = async () => {
+      try {
+        const db = getFirestore();
+        const mealDoc = await getDoc(doc(db, "users", user.uid, ));
+
+        if (mealDoc.exists()) {
+          const data = mealDoc.data();
+          const plan = data.meal_plan;
+
+          if (!plan || Object.keys(plan).length === 0) {
+            setMealPlanEmpty(true);
+            setMealPlan(null);
+          } else {
+            setMealPlanEmpty(false);
+            setMealPlan(plan);
+          }
+        } else {
+          setMealPlanEmpty(true);
+          setMealPlan(null);
+        }
+      } catch (error) {
+        console.error("Failed to fetch meal plan:", error);
+      }
+    };
+
+    fetchMealPlan();
+  }, [user]);
+
+  const generateMealPlan = async () => {
+    if (!targetCalories) {
+      Alert.alert("Validation", "Please enter a target calorie amount.");
+      return;
+    }
+
+    try {
+      const apiKey = "1cae230634f645e694f74c6da042ef80"; // Replace with your key
+      const url = `https://api.spoonacular.com/mealplanner/generate?timeFrame=day&targetCalories=${targetCalories}&diet=${diet}&exclude=${exclude}&apiKey=${apiKey}`;
+
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (!data || !data.meals) {
+        Alert.alert("Error", "Failed to generate meal plan.");
+        return;
+      }
+
+      const db = getFirestore();
+      await setDoc(
+        doc(db, "users", user.uid),
+        { meal_plan: data },
+        { merge: true }
+      );
+
+      setMealPlanEmpty(false);
+      setMealPlan(data);
+      setShowModal(false);
+    } catch (error) {
+      console.error("API Error:", error);
+      Alert.alert("API Error", "Unable to generate meal plan.");
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>What Are we Eating?</Text>
+      <Text style={styles.title}>What Are We Eating?</Text>
 
-      {/* Quick Overview Section */}
       <View style={styles.overview}>
-        <Text style={styles.overviewText}>Today's Meals: {todayMeals}</Text>
-        <Text style={styles.overviewText}>Random Recipe: {randomRecipe}</Text>
+        {mealPlan ? (
+          <>
+            <Text style={styles.overviewTitle}>Today's Meals</Text>
+            <Text style={styles.overviewText}>Plan your meals for the day!</Text>
+            {mealPlan.meals.map((meal: any) => (
+              <Text key={meal.id} style={styles.overviewText}>• {meal.title}</Text>
+            ))}
+          </>
+        ) : (
+          <Text style={styles.overviewText}>No meals available today.</Text>
+        )}
       </View>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Today's Meals</Text>
-        <Text style={styles.cardContent}>Plan your meals for the day!</Text>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>View Meals</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity style={styles.button} onPress={() => setShowModal(true)}>
+            <Text style={styles.buttonText}>Generate</Text>
+      </TouchableOpacity>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Shopping List</Text>
-        <Text style={styles.cardContent}>Check your shopping list.</Text>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>View List</Text>
-        </TouchableOpacity>
-      </View>
+      <Modal visible={showModal} animationType="slide" transparent>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalCard}>
+            <Text style={styles.cardTitle}>Generate Meal Plan</Text>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Weekly Summary</Text>
-        <Text style={styles.cardContent}>Track your weekly progress.</Text>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>View Summary</Text>
-        </TouchableOpacity>
-      </View>
+            <TextInput
+              placeholder="Target Calories"
+              value={targetCalories}
+              onChangeText={setTargetCalories}
+              style={styles.input}
+              keyboardType="numeric"
+            />
+            <TextInput
+              placeholder="Diet (e.g., vegetarian)"
+              value={diet}
+              onChangeText={setDiet}
+              style={styles.input}
+            />
+            <TextInput
+              placeholder="Exclude (e.g., nuts, dairy)"
+              value={exclude}
+              onChangeText={setExclude}
+              style={styles.input}
+            />
+
+            <TouchableOpacity style={styles.button} onPress={generateMealPlan}>
+              <Text style={styles.buttonText}>Generate</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => setShowModal(false)}>
+              <Text style={{ color: "#ccc", marginTop: 10, textAlign: "center" }}>
+                Cancel
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -76,6 +180,11 @@ const styles = StyleSheet.create({
   },
   overviewText: {
     fontSize: 16,
+    color: "#E69145",
+    marginBottom: 5,
+  },
+  overviewTitle: {
+    fontSize: 32,
     color: "#E69145",
     marginBottom: 5,
   },
@@ -111,6 +220,25 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 14,
     fontWeight: "bold",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalCard: {
+    backgroundColor: "#292C35",
+    borderRadius: 10,
+    padding: 20,
+    width: "85%",
+    elevation: 5,
+  },
+  input: {
+    backgroundColor: "#fff",
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
   },
 });
 
