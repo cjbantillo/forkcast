@@ -5,6 +5,8 @@ import ModernButton from "../components/ModernButton";
 import ModernTextInput from "../components/ModernTextInput";
 import { useThemeColor } from "../hooks/useThemeColor";
 import { Picker } from "@react-native-picker/picker";
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 import { router } from "expo-router";
 import { AuthContext } from "./_layout";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -13,6 +15,8 @@ import { db } from "../firebaseConfig";
 const DataGathering = () => {
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
+  const [heightUnit, setHeightUnit] = useState("cm");
+  const [heightCm, setHeightCm] = useState("")
   const [heightFeet, setHeightFeet] = useState("");
   const [heightInches, setHeightInches] = useState("");
   const [weight, setWeight] = useState("");
@@ -43,6 +47,8 @@ const DataGathering = () => {
           } else {
             if (data.age) setAge(data.age);
             if (data.gender) setGender(data.gender);
+            if (data.heightUnit) setHeightUnit(data.heightUnit);
+            if (data.heightCm) setHeightCm(data.heightCm);
             if (data.heightFeet) setHeightFeet(data.heightFeet);
             if (data.heightInches) setHeightInches(data.heightInches);
             if (data.weight) setWeight(data.weight);
@@ -71,6 +77,8 @@ const DataGathering = () => {
         {
           age,
           gender,
+          heightUnit,
+          heightCm,
           heightFeet,
           heightInches,
           weight,
@@ -108,6 +116,7 @@ const DataGathering = () => {
         Tell us about yourself
       </Text>
 
+      {/* Gender */}
       <View style={styles.dropdownContainer}>
         <Picker
           selectedValue={gender}
@@ -122,21 +131,45 @@ const DataGathering = () => {
         </Picker>
       </View>
 
-      <View style={styles.rowContainer}>
-        <ModernTextInput
-          value={heightFeet}
-          onChangeText={setHeightFeet}
-          placeholder="ft"
-          style={styles.halfInput}
-        />
-        <ModernTextInput
-          value={heightInches}
-          onChangeText={setHeightInches}
-          placeholder="in"
-          style={styles.halfInput}
-        />
+      {/* Height Unit Selector */}
+      <View style={styles.dropdownContainer}>
+        <Picker
+          selectedValue={heightUnit}
+          onValueChange={(value) => setHeightUnit(value)}
+          style={styles.dropdown}
+          dropdownIconColor="#fff"
+        >
+          <Picker.Item label="Centimeters" value="cm" />
+          <Picker.Item label="Feet & Inches" value="ftin" />
+        </Picker>
       </View>
 
+      {/* Height Inputs */}
+      {heightUnit === "cm" ? (
+        <ModernTextInput
+          value={heightCm}
+          onChangeText={setHeightCm}
+          placeholder="Enter height (cm)"
+          style={styles.input}
+        />
+      ) : (
+        <View style={styles.rowContainer}>
+          <ModernTextInput
+            value={heightFeet}
+            onChangeText={setHeightFeet}
+            placeholder="ft"
+            style={styles.halfInput}
+          />
+          <ModernTextInput
+            value={heightInches}
+            onChangeText={setHeightInches}
+            placeholder="in"
+            style={styles.halfInput}
+          />
+        </View>
+      )}
+
+      {/* Weight */}
       <ModernTextInput
         value={weight}
         onChangeText={setWeight}
@@ -144,6 +177,7 @@ const DataGathering = () => {
         style={styles.input}
       />
 
+      {/* Age */}
       <ModernTextInput
         value={age}
         onChangeText={setAge}
@@ -151,6 +185,7 @@ const DataGathering = () => {
         style={styles.input}
       />
 
+      {/* Bodyfat */}
       <View style={styles.dropdownContainer}>
         <Picker
           selectedValue={bodyfat}
@@ -165,6 +200,7 @@ const DataGathering = () => {
         </Picker>
       </View>
 
+      {/* Activity Level */}
       <View style={styles.dropdownContainer}>
         <Picker
           selectedValue={activityLevel}
@@ -186,11 +222,10 @@ const DataGathering = () => {
         disabled={
           !age ||
           !gender ||
-          !heightFeet ||
-          !heightInches ||
           !weight ||
           !bodyfat ||
-          !activityLevel
+          !activityLevel ||
+          (heightUnit === "cm" ? !heightCm : (!heightFeet && !heightInches))
         }
       />
     </View>
