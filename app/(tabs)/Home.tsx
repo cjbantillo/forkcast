@@ -165,6 +165,7 @@ const Dashboard = () => {
       const meal = mealPlan.meals[mealIndex];
 
       return (
+        <TouchableOpacity onPress={() => router.push(`/(modals)/${meal.id}`)}>
         <View style={{ alignItems: "center", marginBottom: 30 }}>
           <View style={styles.mealCard}>
             <Image
@@ -179,6 +180,7 @@ const Dashboard = () => {
             <Text style={styles.mealTitle}>{meal.title}</Text>
           </View>
         </View>
+        </TouchableOpacity>
       );
     })()}
 
