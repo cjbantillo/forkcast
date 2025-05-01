@@ -115,7 +115,7 @@ const Dashboard = () => {
       </Text>
 
       <Text style={styles.topText}>
-        Complete you daily nutrition
+        Complete your daily nutrition
       </Text>
 
       <View style={styles.overview}>
@@ -183,7 +183,7 @@ const Dashboard = () => {
     })()}
 
 
-      <TouchableOpacity style={styles.button} onPress={() => setShowModal(true)}>
+      <TouchableOpacity style={styles.generateButton} onPress={() => setShowModal(true)}>
             <Text style={styles.buttonText}>Generate</Text>
       </TouchableOpacity>
 
@@ -211,7 +211,7 @@ const Dashboard = () => {
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => setShowModal(false)}>
-              <Text style={{ color: "#ccc", marginTop: 10, textAlign: "center" }}>
+              <Text style={styles.cancelButton}>
                 Cancel
               </Text>
             </TouchableOpacity>
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
-    backgroundColor: "#FEFEFE",
+    backgroundColor: "#F9F9F9",
   },
   title: {
     fontSize: 16,
@@ -246,16 +246,26 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   overview: {
-    backgroundColor: "#F2F2F2",
+    backgroundColor: "#FEFEFE",
     borderRadius: 10,
     padding: 15,
     marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 6,
   },
   card: {
     backgroundColor: "#F9F9F9",
     borderRadius: 10,
     padding: 15,
     marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 6,
   },
   cardTitle: {
     fontSize: 18,
@@ -271,9 +281,22 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#E69145",
     paddingVertical: 10,
-    borderRadius: 5,
     alignItems: "center",
-    marginBottom: 100,
+    borderRadius: 100,
+    marginTop: 20,
+  },
+  cancelButton: { 
+    color: "#E69145", 
+    marginTop: 10, 
+    textAlign: "center",
+  },
+  generateButton: {
+    backgroundColor: "#E69145",
+    paddingVertical: 10,
+    borderRadius: 100,
+    alignItems: "center",
+    marginBottom: 90,
+
   },
   buttonText: {
     color: "#ffffff",
@@ -288,7 +311,7 @@ const styles = StyleSheet.create({
   },
   modalCard: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 10,
+    borderRadius: 30,
     padding: 20,
     width: "85%",
   },
@@ -296,7 +319,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0F0F0",
     color: "#333333",
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 100,
     marginBottom: 10,
   },
   nutrientRow: {
@@ -311,6 +334,11 @@ const styles = StyleSheet.create({
     width: "48%",
     marginBottom: 10,
     alignItems: "center",
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 6,
   },
   nutrientLabel: {
     color: "#333333",
@@ -336,6 +364,10 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     position: "relative",
     backgroundColor: "#DDD",
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 6,
   },
   mealTitle: {
     position: "absolute",

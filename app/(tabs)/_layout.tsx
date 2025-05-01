@@ -1,30 +1,35 @@
 import React from "react";
 import { Tabs } from "expo-router";
 import { FontAwesome6 } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 
 export default function TabsLayout() {
   return (
     <Tabs
-      screenOptions={{
-        tabBarStyle: {
-          position: "absolute",
-          left: 24,
-          right: 24,
-          bottom: 24,
-          height: 50,
-          borderRadius: 35,
-          backgroundColor: "#17181D",
-          backdropFilter: "blur",
-          paddingTop: 8,
-          borderTopWidth: 0,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 6 },
-          shadowOpacity: 0.1,
-          shadowRadius: 10,
-          elevation: 10,
-        },
+    screenOptions={{
+      tabBarStyle: {
+        position: "absolute",
+        left: 24,
+        right: 24,
+        bottom: 24,
+        height: 50,
+        borderRadius: 35,
+        overflow: 'hidden', // important for BlurView to respect border radius
+        elevation: 10,
+        paddingBottom: 8,
+        paddingTop: 8,
+        justifyContent: 'center',
+        
+      },
+      tabBarBackground: () => (
+        <BlurView
+          tint="dark" // can be "light", "dark", or "default"
+          intensity={50}
+          style={{ flex: 1 }}
+        />
+      ),
         tabBarActiveTintColor: "#E69145",
-        tabBarInactiveTintColor: "#ffffff",
+        tabBarInactiveTintColor: "#17181D",
         headerShown: false,
       }}
     >

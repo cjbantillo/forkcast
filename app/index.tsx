@@ -16,6 +16,7 @@ import {
 import { auth, db } from "../firebaseConfig"; 
 import { doc, setDoc, getDoc } from "firebase/firestore"; 
 import { AuthContext } from "./_layout";
+import { FontAwesome6 } from '@expo/vector-icons';
 
 export default function AuthPage() {
   const { user, setUser } = useContext(AuthContext)!;
@@ -112,8 +113,9 @@ export default function AuthPage() {
       <Text style={styles.title}>Welcome to ForkCast</Text>
       <Text style={styles.subtext}>Let's personalize your meal plan!</Text>
 
-      <TouchableOpacity onPress={handleGoogleSignIn}>
-        <Text>Sign in with Google</Text>
+      <TouchableOpacity onPress={handleGoogleSignIn} style={[styles.googleSign, styles.button]}>
+        <FontAwesome6 name="google" size={20} color="#DB4437" style={{ marginRight: 10 }} />
+        <Text style={styles.googleText}>Sign in with Google</Text>
       </TouchableOpacity>
     </View>
   );
@@ -125,19 +127,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#17181D",
+    backgroundColor: "#FEFEFE",
   },
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#17181D",
+    backgroundColor: "#FEFEFE",
     padding: 20,
   },
   logo: {
     width: 150,
     height: 150,
     marginBottom: 40,
+    backgroundColor: "#17181D",
+    borderRadius: 50,
   },
   title: {
     fontSize: 28,
@@ -161,11 +165,28 @@ const styles = StyleSheet.create({
   button: {
     width: "80%",
     padding: 15,
-    borderRadius: 8,
+    borderRadius: 100,
     alignItems: "center",
   },
   accentButton: {
     backgroundColor: "#E69145", // Moved from inline style
   },
+  googleSign: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "#E69145",
+    borderRadius: "rounded",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+  },
+  googleText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#E69145",
+  },
+  
 });
 
