@@ -9,12 +9,18 @@ import {
   Modal,
   TextInput,
   Alert,
+  Image,
+  Pressable,
 } from "react-native";
 import { AuthContext } from "../_layout";
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+import { FontAwesome6 } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+
 
 const Dashboard = () => {
   const [mealPlanEmpty, setMealPlanEmpty] = useState(false);
+  const [selectedMeal, setSelectedMeal] = useState<"breakfast" | "lunch" | "dinner" | null>(null);
   const [mealPlan, setMealPlan] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
   const [targetCalories, setTargetCalories] = useState("");
@@ -27,6 +33,16 @@ const Dashboard = () => {
     if (!user) {
       router.replace("/");
       return;
+    }
+  
+    // Set default meal based on time
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 11) {
+      setSelectedMeal("breakfast");
+    } else if (hour >= 11 && hour < 17) {
+      setSelectedMeal("lunch");
+    } else {
+      setSelectedMeal("dinner");
     }
 
     const fetchMealPlan = async () => {
@@ -64,8 +80,8 @@ const Dashboard = () => {
     }
 
     try {
-      const apiKey = "1cae230634f645e694f74c6da042ef80"; // Replace with your key
-      const url = `https://api.spoonacular.com/mealplanner/generate?timeFrame=day&targetCalories=${targetCalories}&diet=${diet}&exclude=${exclude}&apiKey=${apiKey}`;
+      const apiKey = "1cae230634f645e694f74c6da042ef80"; 
+      const url = `https://api.spoonacular.com/mealplanner/generate?timeFrame=day&targetCalories=${targetCalories}&exclude=${exclude}&apiKey=${apiKey}`;
 
       const response = await fetch(url);
       const data = await response.json();
@@ -93,21 +109,79 @@ const Dashboard = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>What Are We Eating?</Text>
+      <Text style={styles.title} key={user.uid}>
+        <Text style={styles.subtitle}>Hello</Text> 
+        <Text style={styles.dot}>•</Text> {user?.displayName}
+      </Text>
+
+      <Text style={styles.topText}>
+        Complete you daily nutrition
+      </Text>
 
       <View style={styles.overview}>
-        {mealPlan ? (
-          <>
-            <Text style={styles.overviewTitle}>Today's Meals</Text>
-            <Text style={styles.overviewText}>Plan your meals for the day!</Text>
-            {mealPlan.meals.map((meal: any) => (
-              <Text key={meal.id} style={styles.overviewText}>• {meal.title}</Text>
-            ))}
-          </>
-        ) : (
-          <Text style={styles.overviewText}>No meals available today.</Text>
-        )}
-      </View>
+      {mealPlan?.nutrients && (
+        <View style={styles.nutrientRow}>
+          <View style={styles.nutrientCard}>
+            <FontAwesome6 name="fire" size={24} color="#E69145" />
+            <Text style={styles.nutrientLabel}>Calories</Text>
+            <Text style={styles.nutrientValue}>{mealPlan.nutrients.calories.toFixed(0)}</Text>
+          </View>
+
+          <View style={styles.nutrientCard}>
+            <FontAwesome6 name="bread-slice" size={24} color="#E69145" />
+            <Text style={styles.nutrientLabel}>Carbs</Text>
+            <Text style={styles.nutrientValue}>{mealPlan.nutrients.carbohydrates.toFixed(2)}g</Text>
+          </View>
+
+          <View style={styles.nutrientCard}>
+            <FontAwesome6 name="drumstick-bite" size={24} color="#E69145" />
+            <Text style={styles.nutrientLabel}>Protein</Text>
+            <Text style={styles.nutrientValue}>{mealPlan.nutrients.protein.toFixed(2)}g</Text>
+          </View>
+
+          <View style={styles.nutrientCard}>
+            <FontAwesome6 name="cheese" size={24} color="#E69145" />
+            <Text style={styles.nutrientLabel}>Fat</Text>
+            <Text style={styles.nutrientValue}>{mealPlan.nutrients.fat.toFixed(2)}g</Text>
+          </View>
+        </View>
+      )}
+    </View>
+    <View style={{ flexDirection: "row", justifyContent: "space-evenly", marginBottom: 20 }}>
+      <TouchableOpacity onPress={() => setSelectedMeal("breakfast")}>
+        <Text style={{ color: selectedMeal === "breakfast" ? "#E69145" : "#333333" }}>Breakfast</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => setSelectedMeal("lunch")}>
+        <Text style={{ color: selectedMeal === "lunch" ? "#E69145" : "#333333" }}>Lunch</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => setSelectedMeal("dinner")}>
+        <Text style={{ color: selectedMeal === "dinner" ? "#E69145" : "#333333" }}>Dinner</Text>
+      </TouchableOpacity>
+    </View>
+
+    {selectedMeal && mealPlan?.meals && (() => {
+      const mealIndex =
+        selectedMeal === "breakfast" ? 0 : selectedMeal === "lunch" ? 1 : 2;
+      const meal = mealPlan.meals[mealIndex];
+
+      return (
+        <View style={{ alignItems: "center", marginBottom: 30 }}>
+          <View style={styles.mealCard}>
+            <Image
+              source={{ uri: `https://spoonacular.com/recipeImages/${meal.image}` }}
+              style={styles.mealImage}
+              resizeMode="cover"
+            />
+            <LinearGradient
+              colors={['rgba(0,0,0,0.4)', 'transparent', 'transparent', 'rgba(0,0,0,0.6)']}
+              style={StyleSheet.absoluteFill}
+            />
+            <Text style={styles.mealTitle}>{meal.title}</Text>
+          </View>
+        </View>
+      );
+    })()}
+
 
       <TouchableOpacity style={styles.button} onPress={() => setShowModal(true)}>
             <Text style={styles.buttonText}>Generate</Text>
@@ -116,7 +190,7 @@ const Dashboard = () => {
       <Modal visible={showModal} animationType="slide" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalCard}>
-            <Text style={styles.cardTitle}>Generate Meal Plan</Text>
+            <Text style={styles.cardTitle}>What do we eat today?</Text>
 
             <TextInput
               placeholder="Target Calories"
@@ -124,12 +198,6 @@ const Dashboard = () => {
               onChangeText={setTargetCalories}
               style={styles.input}
               keyboardType="numeric"
-            />
-            <TextInput
-              placeholder="Diet (e.g., vegetarian)"
-              value={diet}
-              onChangeText={setDiet}
-              style={styles.input}
             />
             <TextInput
               placeholder="Exclude (e.g., nuts, dairy)"
@@ -153,57 +221,47 @@ const Dashboard = () => {
     </ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
-    backgroundColor: "#17181D",
+    backgroundColor: "#FEFEFE",
   },
   title: {
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: "bold",
     marginBottom: 20,
-    textAlign: "center",
-    color: "#ffffff",
+    marginTop: 40,
+    color: "#333333",
+  },
+  subtitle: {
+    fontWeight: "300",
+  },
+  dot: {
+    color: "#E69145",
+  },
+  topText: {
+    color: "#333333",
+    fontSize: 28,
+    marginBottom: 12,
   },
   overview: {
-    backgroundColor: "#292C35",
+    backgroundColor: "#F2F2F2",
     borderRadius: 10,
     padding: 15,
     marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  overviewText: {
-    fontSize: 16,
-    color: "#E69145",
-    marginBottom: 5,
-  },
-  overviewTitle: {
-    fontSize: 32,
-    color: "#E69145",
-    marginBottom: 5,
   },
   card: {
-    backgroundColor: "#292C35",
+    backgroundColor: "#F9F9F9",
     borderRadius: 10,
     padding: 15,
     marginBottom: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#ffffff",
+    color: "#333333",
   },
   cardContent: {
     fontSize: 14,
@@ -215,6 +273,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 5,
     alignItems: "center",
+    marginBottom: 100,
   },
   buttonText: {
     color: "#ffffff",
@@ -225,21 +284,73 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.3)",
   },
   modalCard: {
-    backgroundColor: "#292C35",
+    backgroundColor: "#FFFFFF",
     borderRadius: 10,
     padding: 20,
     width: "85%",
-    elevation: 5,
   },
   input: {
-    backgroundColor: "#fff",
+    backgroundColor: "#F0F0F0",
+    color: "#333333",
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
   },
+  nutrientRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+  },
+  nutrientCard: {
+    backgroundColor: "#EFEFEF",
+    padding: 15,
+    borderRadius: 10,
+    width: "48%",
+    marginBottom: 10,
+    alignItems: "center",
+  },
+  nutrientLabel: {
+    color: "#333333",
+    marginTop: 8,
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  nutrientValue: {
+    color: "#E69145",
+    fontSize: 18,
+    fontWeight: "bold",
+    marginTop: 5,
+  },
+  mealImage: {
+    width: 320,
+    height: 220,
+    borderRadius: 20,
+  },
+  mealCard: {
+    width: 320,
+    height: 220,
+    borderRadius: 20,
+    overflow: "hidden",
+    position: "relative",
+    backgroundColor: "#DDD",
+  },
+  mealTitle: {
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    right: 20,
+    textAlign: "center",
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
+    textShadowColor: "rgba(0, 0, 0, 0.5)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
 });
+
 
 export default Dashboard;
