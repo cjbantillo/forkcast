@@ -5,24 +5,27 @@ import ModernButton from "../components/ModernButton";
 import ModernTextInput from "../components/ModernTextInput";
 import { useThemeColor } from "../hooks/useThemeColor";
 import { Picker } from "@react-native-picker/picker";
-import DateTimePicker from '@react-native-community/datetimepicker';
-
 import { router } from "expo-router";
 import { AuthContext } from "./_layout";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 const DataGathering = () => {
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
   const [heightUnit, setHeightUnit] = useState("cm");
-  const [heightCm, setHeightCm] = useState("")
+  const [heightCm, setHeightCm] = useState("");
   const [heightFeet, setHeightFeet] = useState("");
   const [heightInches, setHeightInches] = useState("");
   const [weight, setWeight] = useState("");
   const [bodyfat, setBodyfat] = useState("");
   const [activityLevel, setActivityLevel] = useState("");
   const [loading, setLoading] = useState(true);
+  const [birthday, setBirthday] = useState("");
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
 
   const user = useContext(AuthContext)?.user;
 
@@ -77,6 +80,7 @@ const DataGathering = () => {
         {
           age,
           gender,
+          birthday,
           heightUnit,
           heightCm,
           heightFeet,
@@ -111,11 +115,11 @@ const DataGathering = () => {
         style={styles.logo}
         resizeMode="contain"
       />
-
+  
       <Text style={[styles.title, { color: textColor }]}>
         Tell us about yourself
       </Text>
-
+  
       {/* Gender */}
       <View style={styles.dropdownContainer}>
         <Picker
@@ -130,6 +134,30 @@ const DataGathering = () => {
           <Picker.Item label="Other" value="other" />
         </Picker>
       </View>
+  
+      {/* Birthday */}
+      <ModernTextInput
+         value={birthday ? new Date(birthday).toLocaleDateString() : ""}
+         placeholder="Select Birthday"
+         onFocus={() => setShowDatePicker(true)}
+         editable={false}
+         style={styles.input}
+         onChangeText={() => {}} // Required prop but not used here
+      />
+      {showDatePicker && (
+        <DateTimePicker
+          value={birthday ? new Date(birthday) : new Date()}
+          mode="date"
+          display="default"
+          maximumDate={new Date()}
+          onChange={(event, selectedDate) => {
+        setShowDatePicker(false);
+        if (selectedDate) {
+          setBirthday(selectedDate.toISOString());
+        }
+      }}
+    />
+  )}
 
       {/* Height Unit Selector */}
       <View style={styles.dropdownContainer}>
@@ -143,7 +171,7 @@ const DataGathering = () => {
           <Picker.Item label="Feet & Inches" value="ftin" />
         </Picker>
       </View>
-
+  
       {/* Height Inputs */}
       {heightUnit === "cm" ? (
         <ModernTextInput
@@ -168,7 +196,7 @@ const DataGathering = () => {
           />
         </View>
       )}
-
+  
       {/* Weight */}
       <ModernTextInput
         value={weight}
@@ -176,15 +204,7 @@ const DataGathering = () => {
         placeholder="Enter your weight (kg)"
         style={styles.input}
       />
-
-      {/* Age */}
-      <ModernTextInput
-        value={age}
-        onChangeText={setAge}
-        placeholder="Enter your age"
-        style={styles.input}
-      />
-
+  
       {/* Bodyfat */}
       <View style={styles.dropdownContainer}>
         <Picker
@@ -199,7 +219,7 @@ const DataGathering = () => {
           <Picker.Item label="High" value="high" />
         </Picker>
       </View>
-
+  
       {/* Activity Level */}
       <View style={styles.dropdownContainer}>
         <Picker
@@ -214,14 +234,14 @@ const DataGathering = () => {
           <Picker.Item label="Very active, daily training" value="high" />
         </Picker>
       </View>
-
+  
       {/* Continue Button */}
       <ModernButton
         title="Continue"
         onPress={handleContinue}
         disabled={
-          !age ||
           !gender ||
+          !birthday ||
           !weight ||
           !bodyfat ||
           !activityLevel ||
@@ -230,6 +250,7 @@ const DataGathering = () => {
       />
     </View>
   );
+  
 };
 
 const styles = StyleSheet.create({
