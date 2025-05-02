@@ -38,7 +38,7 @@ export default function TabsLayout() {
         options={{
           tabBarLabel: "",
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome6 name="house" color={color} size={size ?? 20} />
+            <FontAwesome6 name="house" color={color} size={size ?? 20} solid />
           ),
         }}
       />
@@ -47,7 +47,7 @@ export default function TabsLayout() {
         options={{
           tabBarLabel: "",
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome6 name="calendar" color={color} size={size ?? 20} />
+            <FontAwesome6 name="calendar" color={color} size={size ?? 20} solid />
           ),
         }}
       />
@@ -56,7 +56,7 @@ export default function TabsLayout() {
         options={{
           tabBarLabel: "",
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome6 name="heart" color={color} size={size ?? 20} />
+            <FontAwesome6 name="heart" color={color} size={size ?? 20} solid/>
           ),
         }}
       />
@@ -65,7 +65,7 @@ export default function TabsLayout() {
         options={{
           tabBarLabel: "",
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome6 name="user" color={color} size={size ?? 20} />
+            <FontAwesome6 name="user" color={color} size={size ?? 20} solid/>
           ),
         }}
       />

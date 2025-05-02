@@ -42,11 +42,10 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false }}>
           {/* Bottom tab navigation */}
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(modals)" options={{ headerShown: false }} />
 
           {/* Additional screens */}
           <Stack.Screen name="data-gathering" options={{ title: "Data Gathering" }} />
-          <Stack.Screen name="backupindex" options={{ title: "Backup Index" }} />
-          <Stack.Screen name="nickname" options={{ title: "Nickname" }} />
         </Stack>
       </PaperProvider>
     </AuthContext.Provider>
