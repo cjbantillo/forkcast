@@ -5,10 +5,10 @@ import {
   StyleSheet,
   Switch,
   TouchableOpacity,
-  Alert,
   ScrollView,
   Image,
   ActivityIndicator,
+  Modal,
 } from 'react-native';
 import { signOut, GoogleAuthProvider } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
@@ -25,11 +25,11 @@ const Profile = () => {
 
   const [profileData, setProfileData] = useState<any>(null);
   const [darkMode, setDarkMode] = useState(false);
-
-  const toggleDarkMode = () => setDarkMode((prev) => !prev);
-
   const [loading, setLoading] = useState(true);
   const [isGoogleAccount, setIsGoogleAccount] = useState(false);
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+
+  const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
   useEffect(() => {
     if (!user) {
@@ -37,7 +37,6 @@ const Profile = () => {
       return;
     }
 
-    // Check if user signed in with Google
     setIsGoogleAccount(
       user.providerData.some(provider => provider.providerId === GoogleAuthProvider.PROVIDER_ID)
     );
@@ -50,8 +49,6 @@ const Profile = () => {
         if (userSnap.exists()) {
           setProfileData(userSnap.data());
         } else if (isGoogleAccount) {
-          // For Google users without additional profile data
-          // You could create a default profile here if needed
           console.log('Google user without additional profile data');
         }
       } catch (error) {
@@ -65,40 +62,24 @@ const Profile = () => {
   }, [user, isGoogleAccount]);
 
   const handleExport = () => {
-    Alert.alert('Export', 'Weekly plan exported as PDF or image (mock functionality).');
+    // Mock functionality
+    console.log('Exporting plan...');
   };
 
   const handleLogout = async () => {
-    Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Sign Out',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await signOut(auth);
-              setUser(null);
-              router.replace('/');
-            } catch (error) {
-              Alert.alert('Logout Failed', (error as Error).message);
-            }
-          },
-        },
-      ],
-      { cancelable: true }
-    );
+    try {
+      await signOut(auth);
+      setUser(null);
+      router.replace('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   const renderInfoRow = (label: string, value: string | number | undefined, icon: string) => (
     <View style={[styles.infoRow, darkMode && styles.darkInfoRow]}>
       <View style={styles.labelContainer}>
-        <Ionicons name={icon} size={20} color={darkMode ? '#E69145' : '#E69145'} style={styles.icon} />
+        <Ionicons name={icon} size={20} color="#E69145" style={styles.icon} />
         <Text style={[styles.infoLabel, darkMode && styles.darkText]}>{label}</Text>
       </View>
       <Text style={[styles.infoValue, darkMode && styles.darkText]}>
@@ -119,12 +100,13 @@ const Profile = () => {
           <Text style={[styles.loadingText, darkMode && styles.darkText]}>Loading profile...</Text>
         </View>
       ) : (
-      <><View style={styles.header}>
+        <>
+          <View style={styles.header}>
             <View style={styles.profileImageContainer}>
               <Image
                 source={{ uri: user?.photoURL || 'https://i.pravatar.cc/150' }}
-                style={styles.profileImage} />
-              {/* No edit button for OAuth profile pictures */}
+                style={styles.profileImage}
+              />
             </View>
             <Text style={[styles.username, darkMode && styles.darkText]}>
               {user?.displayName || profileData?.username || 'User'}
@@ -136,52 +118,100 @@ const Profile = () => {
                 <Text style={styles.verifiedText}>Verified</Text>
               </View>
             )}
-          </View><View style={styles.statsContainer}>
-              <View style={[styles.statBox, darkMode && styles.darkStatBox]}>
-                <Text style={styles.statValue}>{profileData?.weight || '68'}</Text>
-                <Text style={styles.statLabel}>Weight</Text>
-              </View>
-              <View style={[styles.statBox, darkMode && styles.darkStatBox]}>
-                <Text style={styles.statValue}>{profileData?.height || '175'}</Text>
-                <Text style={styles.statLabel}>Height</Text>
-              </View>
-              <View style={[styles.statBox, darkMode && styles.darkStatBox]}>
-                <Text style={styles.statValue}>{profileData?.bmi || '22.4'}</Text>
-                <Text style={styles.statLabel}>BMI</Text>
-              </View>
-            </View><Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Personal Information</Text><View style={[styles.card, darkMode && styles.darkCard]}>
-              {renderInfoRow('Age', profileData?.age || '28', 'calendar-outline')}
-              {renderInfoRow('Gender', profileData?.gender || 'Male', 'person-outline')}
-              {renderInfoRow('Calories', profileData?.calories || '2100', 'nutrition-outline')}
-            </View><Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Settings</Text><View style={[styles.card, darkMode && styles.darkCard]}>
-              <View style={styles.settingRow}>
-                <View style={styles.labelContainer}>
-                  <Ionicons name="moon-outline" size={20} color={darkMode ? '#E69145' : '#E69145'} style={styles.icon} />
-                  <Text style={[styles.settingLabel, darkMode && styles.darkText]}>Dark Mode</Text>
-                </View>
-                <Switch
-                  value={darkMode}
-                  onValueChange={toggleDarkMode}
-                  trackColor={{ false: '#D1D1D6', true: '#E69145' }}
-                  thumbColor={'#FEFEFE'} />
-              </View>
+          </View>
 
-              <TouchableOpacity style={styles.settingRow} onPress={handleExport}>
-                <View style={styles.labelContainer}>
-                  <Ionicons name="share-outline" size={20} color={darkMode ? '#E69145' : '#E69145'} style={styles.icon} />
-                  <Text style={[styles.settingLabel, darkMode && styles.darkText]}>Export & Share Weekly Plan</Text>
-                </View>
-                <Ionicons name="chevron-forward" size={20} color={darkMode ? '#AAAAAA' : '#777777'} />
-              </TouchableOpacity>
-            </View><View style={styles.accountInfoContainer}>
-              <Text style={[styles.accountTypeText, darkMode && styles.darkText]}>
-                {isGoogleAccount ? 'Signed in with Google' : 'Email Account'}
-              </Text>
-            </View><TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-              <Ionicons name="log-out-outline" size={20} color="#FEFEFE" style={styles.logoutIcon} />
-              <Text style={styles.logoutText}>{isGoogleAccount ? 'Sign out' : 'Logout'}</Text>
-            </TouchableOpacity></>
+          <View style={styles.statsContainer}>
+            <View style={[styles.statBox, darkMode && styles.darkStatBox]}>
+              <Text style={styles.statValue}>{profileData?.weight || '68'}</Text>
+              <Text style={styles.statLabel}>Weight</Text>
+            </View>
+            <View style={[styles.statBox, darkMode && styles.darkStatBox]}>
+              <Text style={styles.statValue}>{profileData?.height || '175'}</Text>
+              <Text style={styles.statLabel}>Height</Text>
+            </View>
+            <View style={[styles.statBox, darkMode && styles.darkStatBox]}>
+              <Text style={styles.statValue}>{profileData?.bmi || '22.4'}</Text>
+              <Text style={styles.statLabel}>BMI</Text>
+            </View>
+          </View>
+
+          <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Personal Information</Text>
+          <View style={[styles.card, darkMode && styles.darkCard]}>
+            {renderInfoRow('Age', profileData?.age || '28', 'calendar-outline')}
+            {renderInfoRow('Gender', profileData?.gender || 'Male', 'person-outline')}
+            {renderInfoRow('Calories', profileData?.calories || '2100', 'nutrition-outline')}
+          </View>
+
+          <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Settings</Text>
+          <View style={[styles.card, darkMode && styles.darkCard]}>
+            <View style={styles.settingRow}>
+              <View style={styles.labelContainer}>
+                <Ionicons name="moon-outline" size={20} color="#E69145" style={styles.icon} />
+                <Text style={[styles.settingLabel, darkMode && styles.darkText]}>Dark Mode</Text>
+              </View>
+              <Switch
+                value={darkMode}
+                onValueChange={toggleDarkMode}
+                trackColor={{ false: '#D1D1D6', true: '#E69145' }}
+                thumbColor={'#FEFEFE'}
+              />
+            </View>
+
+            <TouchableOpacity style={styles.settingRow} onPress={handleExport}>
+              <View style={styles.labelContainer}>
+                <Ionicons name="share-outline" size={20} color="#E69145" style={styles.icon} />
+                <Text style={[styles.settingLabel, darkMode && styles.darkText]}>Export & Share Weekly Plan</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={darkMode ? '#AAAAAA' : '#777777'} />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.accountInfoContainer}>
+            <Text style={[styles.accountTypeText, darkMode && styles.darkText]}>
+              {isGoogleAccount ? 'Signed in with Google' : 'Email Account'}
+            </Text>
+          </View>
+
+          <TouchableOpacity style={styles.logoutButton} onPress={() => setLogoutModalVisible(true)}>
+            <Ionicons name="log-out-outline" size={20} color="#FEFEFE" style={styles.logoutIcon} />
+            <Text style={styles.logoutText}>{isGoogleAccount ? 'Sign out' : 'Logout'}</Text>
+          </TouchableOpacity>
+        </>
       )}
+
+      {/* Logout Modal */}
+      <Modal
+        animationType="slide"
+        transparent
+        visible={logoutModalVisible}
+        onRequestClose={() => setLogoutModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, darkMode && styles.darkCard]}>
+            <Text style={[styles.modalTitle, darkMode && styles.darkText]}>Confirm Sign Out</Text>
+            <Text style={[styles.modalMessage, darkMode && styles.darkText]}>
+              Are you sure you want to sign out?
+            </Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, { backgroundColor: '#AAA' }]}
+                onPress={() => setLogoutModalVisible(false)}
+              >
+                <Text style={styles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, { backgroundColor: '#E69145' }]}
+                onPress={() => {
+                  setLogoutModalVisible(false);
+                  handleLogout();
+                }}
+              >
+                <Text style={styles.modalButtonText}>Sign Out</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -191,6 +221,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FEFEFE',
     paddingHorizontal: 24,
+    marginBottom: 30,
   },
   verifiedBadge: {
     flexDirection: 'row',
@@ -361,7 +392,7 @@ const styles = StyleSheet.create({
   logoutButton: {
     backgroundColor: '#E69145',
     paddingVertical: 14,
-    borderRadius: 12,
+    borderRadius: 50,
     alignItems: 'center',
     marginVertical: 8,
     flexDirection: 'row',
@@ -396,6 +427,46 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#777777',
     fontStyle: 'italic',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#FFF',
+    padding: 24,
+    borderRadius: 16,
+    width: '80%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 12,
+  },
+  modalMessage: {
+    fontSize: 15,
+    marginBottom: 24,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  modalButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+  },
+  modalButtonText: {
+    color: '#FFF',
+    fontWeight: '600',
+    fontSize: 15,
   },
 });
 
