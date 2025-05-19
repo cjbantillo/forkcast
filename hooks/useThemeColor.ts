@@ -1,4 +1,4 @@
-import { useColorScheme } from "react-native";
+//import { useColorScheme } from "react-native";
 import Colors from "../constants/Colors";
 
 type Theme = "dark" | "light";

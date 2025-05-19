@@ -18,6 +18,7 @@
     "android": {
       "package": "com.forkcast.app",
       "googleServicesFile": "./google-services.json",
+      "permissions": ["INTERNET"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/ForkCast.png",
         "backgroundColor": "#ffffff"

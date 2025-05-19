@@ -10,19 +10,35 @@ import {
 import { useRouter, useRootNavigationState } from "expo-router";
 import {
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithCredential,
   onAuthStateChanged,
 } from "firebase/auth";
-import { auth, db } from "../firebaseConfig"; 
-import { doc, setDoc, getDoc } from "firebase/firestore"; 
+import { auth, db } from "../firebaseConfig";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { AuthContext } from "./_layout";
-import { FontAwesome6 } from '@expo/vector-icons';
+import { FontAwesome6 } from "@expo/vector-icons";
+
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
+
+// Keep the auth session alive
+WebBrowser.maybeCompleteAuthSession();
 
 export default function AuthPage() {
   const { user, setUser } = useContext(AuthContext)!;
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const navigationState = useRootNavigationState();
+
+  // Google Auth Request setup
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    //expoClientId: "<YOUR_EXPO_CLIENT_ID>",
+    //: "<YOUR_IOS_CLIENT_ID>",       // Optional, for real devices
+    androidClientId:
+      "583906509994-3m6uk01jrtc6gnukq4gb5eakurd6lkcd.apps.googleusercontent.com", // Optional, for real devices
+    webClientId:
+      "583906509994-n3hl8bilg3sj1hcu48a2vjjdu30cv82m.apps.googleusercontent.com", // Optional, if using Firebase web fallback
+  });
 
   useEffect(() => {
     if (!navigationState?.key) return;
@@ -31,7 +47,6 @@ export default function AuthPage() {
       if (user) {
         const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
-
         if (docSnap.exists()) {
           const data = docSnap.data();
           if (data.hasCompletedProfile) {
@@ -41,12 +56,10 @@ export default function AuthPage() {
           }
         }
       }
-    }
+    };
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
       if (currentUser) {
-        // ✅ Optional: ensure user doc exists
         const userRef = doc(db, "users", currentUser.uid);
         const userSnap = await getDoc(userRef);
 
@@ -57,6 +70,7 @@ export default function AuthPage() {
           });
         }
 
+        setUser(currentUser);
         router.push("/data-gathering");
       } else {
         setLoading(false);
@@ -64,35 +78,38 @@ export default function AuthPage() {
     });
 
     checkProfile();
-
     return () => unsubscribe();
   }, [navigationState?.key, user]);
 
-  const handleGoogleSignIn = async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const signedInUser = result.user;
+  // ✅ Handle successful Google response
+  useEffect(() => {
+    const handleSignIn = async () => {
+      if (response?.type === "success") {
+        const { id_token } = response.params;
+        const credential = GoogleAuthProvider.credential(id_token);
+        const result = await signInWithCredential(auth, credential);
+        const signedInUser = result.user;
 
-      console.log("User signed in:", signedInUser.uid);
+        const userRef = doc(db, "users", signedInUser.uid);
+        const userSnap = await getDoc(userRef);
+        if (!userSnap.exists()) {
+          await setDoc(userRef, {
+            username: signedInUser.displayName,
+            user_id: signedInUser.uid,
+            created_at: new Date(),
+          });
+        }
 
-      // ✅ Create user document in Firestore
-      const userRef = doc(db, "users", signedInUser.uid);
-      const userSnap = await getDoc(userRef);
-
-      if (!userSnap.exists()) {
-        await setDoc(userRef, {
-          username: signedInUser.displayName,
-          user_id: signedInUser.uid,
-          created_at: new Date(),
-        });
+        setUser(signedInUser);
+        router.push("/data-gathering");
       }
+    };
 
-      setUser(signedInUser);
-      router.push("/data-gathering");
-    } catch (error) {
-      console.error("Google Sign-In Error:", error);
-    }
+    handleSignIn();
+  }, [response]);
+
+  const handleGoogleSignIn = async () => {
+    await promptAsync();
   };
 
   if (loading) {
@@ -104,7 +121,7 @@ export default function AuthPage() {
   }
 
   return (
-    <View style={[styles.container]}>
+    <View style={styles.container}>
       <Image
         source={require("@/assets/images/favicon.png")}
         style={styles.logo}
@@ -113,14 +130,21 @@ export default function AuthPage() {
       <Text style={styles.title}>Welcome to ForkCast</Text>
       <Text style={styles.subtext}>Let's personalize your meal plan!</Text>
 
-      <TouchableOpacity onPress={handleGoogleSignIn} style={[styles.googleSign, styles.button]}>
-        <FontAwesome6 name="google" size={20} color="#DB4437" style={{ marginRight: 10 }} />
+      <TouchableOpacity
+        onPress={handleGoogleSignIn}
+        style={[styles.googleSign, styles.button]}
+      >
+        <FontAwesome6
+          name="google"
+          size={20}
+          color="#DB4437"
+          style={{ marginRight: 10 }}
+        />
         <Text style={styles.googleText}>Sign in with Google</Text>
       </TouchableOpacity>
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   loadingContainer: {
@@ -154,22 +178,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 40,
   },
-  input: {
-    width: "80%",
-    marginBottom: 40,
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: "#292C35", // Moved from inline style
-    color: "#FFFFFF", // Moved from inline style
-  },
   button: {
     width: "80%",
     padding: 15,
     borderRadius: 100,
     alignItems: "center",
-  },
-  accentButton: {
-    backgroundColor: "#E69145", // Moved from inline style
   },
   googleSign: {
     flexDirection: "row",
@@ -178,7 +191,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderWidth: 1,
     borderColor: "#E69145",
-    borderRadius: "rounded",
+    borderRadius: 50,
     paddingVertical: 12,
     paddingHorizontal: 20,
   },
@@ -187,6 +200,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#E69145",
   },
-  
 });
-
